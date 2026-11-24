@@ -1,0 +1,77 @@
+.notice-card,
+.validation-card {
+  padding: 28rpx;
+}
+
+.notice-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.notice-text,
+.notice-warning {
+  color: #666666;
+  font-size: 26rpx;
+  line-height: 1.7;
+}
+
+.notice-warning,
+.overwrite-warning {
+  color: #B76E00;
+}
+
+.notice-warning {
+  margin-top: 12rpx;
+}
+
+.action-group {
+  margin-top: 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.section-title {
+  margin: 36rpx 4rpx 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.file-name {
+  color: #181818;
+  font-size: 27rpx;
+  word-break: break-all;
+  margin-bottom: 12rpx;
+}
+
+.validation-status {
+  color: #666666;
+  line-height: 1.6;
+}
+
+.validation-status--success {
+  color: #2BA471;
+  margin-bottom: 20rpx;
+}
+
+.error-line {
+  color: #D54941;
+  font-size: 25rpx;
+  line-height: 1.6;
+  margin-top: 10rpx;
+  word-break: break-all;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-top: 1rpx solid #EEF1F4;
+}
+
+.overwrite-warning {
+  margin: 20rpx 0;
+  font-size: 25rpx;
+  line-height: 1.6;
+}

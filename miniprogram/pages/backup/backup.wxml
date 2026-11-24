@@ -1,0 +1,43 @@
+<view class="page-body backup-page">
+  <view class="card notice-card">
+    <view class="notice-title">本地 JSON 备份</view>
+    <view class="notice-text">导出包含有效物品、回收站和分类，不包含图片缓存或 WebDAV 凭据。</view>
+    <view class="notice-warning">微信文件分享与选择属于 POC-05，仍需在真机验证。</view>
+  </view>
+
+  <view class="action-group">
+    <t-button theme="primary" size="large" block loading="{{exporting}}" disabled="{{importing || restoring}}" bind:tap="onExportTap">导出并分享 JSON</t-button>
+    <t-button theme="default" variant="outline" size="large" block loading="{{importing}}" disabled="{{exporting || restoring}}" bind:tap="onImportTap">从微信会话选择 JSON</t-button>
+  </view>
+
+  <view class="section-title">导入校验</view>
+  <view class="card validation-card">
+    <view wx:if="{{selectedFileName}}" class="file-name">{{selectedFileName}}</view>
+    <view class="validation-status {{summary ? 'validation-status--success' : ''}}">{{validationStatus}}</view>
+    <view wx:for="{{validationErrors}}" wx:key="index" class="error-line">· {{item}}</view>
+
+    <block wx:if="{{summary}}">
+      <view class="summary-row"><text>有效物品</text><text>{{summary.activeItems}} 条</text></view>
+      <view class="summary-row"><text>回收站物品</text><text>{{summary.deletedItems}} 条</text></view>
+      <view class="summary-row"><text>分类</text><text>{{summary.categories}} 个</text></view>
+      <view class="overwrite-warning">恢复是整库覆盖，不是合并。当前数据会先写入 pre-restore.json。</view>
+      <t-button theme="danger" size="large" block loading="{{restoring}}" bind:tap="onRestoreTap">确认整库恢复</t-button>
+    </block>
+  </view>
+
+  <view class="section-title">恢复保护</view>
+  <t-cell-group theme="card">
+    <t-cell
+      title="撤销上次恢复"
+      description="{{hasPreRestore ? '检测到 pre-restore.json 保护点' : '首次恢复前自动创建保护点'}}"
+      note="入口占位"
+      arrow
+      bindtap="onUndoTap"
+    />
+  </t-cell-group>
+
+  <view class="section-title">坚果云 WebDAV</view>
+  <t-cell-group theme="card">
+    <t-cell title="WebDAV 配置" description="仅配置与凭据管理，传输待 POC-08 验证" arrow bindtap="onWebDavTap" />
+  </t-cell-group>
+</view>
