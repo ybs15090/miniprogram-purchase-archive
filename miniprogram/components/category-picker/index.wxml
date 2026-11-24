@@ -1,0 +1,14 @@
+<view class="picker">
+  <view wx:if="{{tags.length === 0}}" class="picker-empty">还没有分类，可先到“我的 → 分类管理”创建</view>
+  <view wx:else class="picker-tags">
+    <view
+      wx:for="{{tags}}"
+      wx:key="id"
+      class="picker-tag {{item.selected ? 'picker-tag--active' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onTagTap"
+    >
+      {{item.name}}
+    </view>
+  </view>
+</view>

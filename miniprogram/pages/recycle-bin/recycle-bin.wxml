@@ -1,0 +1,33 @@
+<view class="page-body recycle-page">
+  <empty-state
+    wx:if="{{!loading && rows.length === 0}}"
+    text="回收站是空的"
+    hint="删除的物品会在这里保留，可随时恢复"
+  />
+
+  <view wx:else class="card row-list">
+    <view wx:for="{{rows}}" wx:key="item.id" class="row" bindtap="onRowTap">
+      <image
+        wx:if="{{!item.coverFailed}}"
+        class="row-cover"
+        src="{{item.coverSrc}}"
+        mode="aspectFill"
+        lazy-load="{{true}}"
+        data-index="{{index}}"
+        binderror="onCoverError"
+      />
+      <view wx:else class="row-cover row-cover--placeholder">🖼</view>
+      <view class="row-main">
+        <view class="row-title">{{item.item.title}}</view>
+        <view class="row-meta">
+          <text>{{item.amountText}}</text>
+          <text>删除于 {{item.deletedDateText}}</text>
+        </view>
+      </view>
+      <view class="row-ops">
+        <view class="op op--restore" data-id="{{item.item.id}}" catchtap="onRestoreTap">恢复</view>
+        <view class="op op--danger" data-id="{{item.item.id}}" catchtap="onPermanentDeleteTap">永久删除</view>
+      </view>
+    </view>
+  </view>
+</view>

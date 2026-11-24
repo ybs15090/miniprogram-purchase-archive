@@ -1,0 +1,83 @@
+<view class="page-body detail-page">
+  <empty-state wx:if="{{notFound}}" text="物品不存在或已删除" hint="可能已被移入回收站" />
+
+  <block wx:elif="{{item}}">
+    <!-- 封面 -->
+    <view class="card cover-card">
+      <image
+        wx:if="{{!coverFailed}}"
+        class="cover"
+        src="{{coverSrc}}"
+        mode="aspectFill"
+        binderror="onCoverError"
+      />
+      <view wx:else class="cover cover--placeholder">
+        <text>🖼</text>
+        <text class="cover--placeholder-text">封面图片不可用</text>
+      </view>
+    </view>
+
+    <!-- 标题与金额 -->
+    <view class="card base-card">
+      <view class="detail-title">{{item.title}}</view>
+      <view class="detail-amount">{{amountText}}</view>
+      <view class="amount-meta">
+        <text>数量 ×{{item.quantity}}</text>
+        <text wx:if="{{averageText}}">单件约 {{averageText}}</text>
+      </view>
+      <view wx:if="{{categoryNames.length > 0}}" class="category-tags">
+        <text wx:for="{{categoryNames}}" wx:key="*this" class="category-tag">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 购买信息 -->
+    <view class="section-title">购买信息</view>
+    <view class="card field-card">
+      <view class="field-row"><text class="field-label">购买时间</text><text class="field-value">{{dateText}}</text></view>
+      <view wx:if="{{item.purchasePlatform}}" class="field-row"><text class="field-label">购买平台</text><text class="field-value">{{item.purchasePlatform}}</text></view>
+      <view wx:if="{{item.orderNumber}}" class="field-row"><text class="field-label">订单编号</text><text class="field-value order-number">{{item.orderNumber}}</text></view>
+      <view wx:if="{{item.productUrl}}" class="field-row field-row--link" bindtap="onOpenLinkTap">
+        <text class="field-label">商品链接</text>
+        <text class="field-link">复制链接 📋</text>
+      </view>
+      <view class="field-row"><text class="field-label">创建时间</text><text class="field-value">{{createdAtText}}</text></view>
+      <view class="field-row"><text class="field-label">更新时间</text><text class="field-value">{{updatedAtText}}</text></view>
+    </view>
+
+    <!-- 描述 -->
+    <block wx:if="{{item.description}}">
+      <view class="section-title">描述</view>
+      <view class="card desc-card">
+        <text class="desc-text">{{item.description}}</text>
+      </view>
+    </block>
+
+    <!-- 详情图 -->
+    <view class="section-title">详情图片（{{item.detailImageUrls.length}}）</view>
+    <view wx:if="{{item.detailImageUrls.length === 0}}" class="card desc-card">
+      <text class="desc-text desc-text--muted">暂无详情图片</text>
+    </view>
+    <view wx:else class="detail-images">
+      <block wx:for="{{detailImageSrcs}}" wx:key="index">
+        <image
+          wx:if="{{!detailImageFailed[index]}}"
+          class="detail-image"
+          src="{{item}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+          data-index="{{index}}"
+          bindtap="onDetailImageTap"
+          binderror="onDetailImageError"
+        />
+        <view wx:else class="detail-image detail-image--placeholder">图片不可用</view>
+      </block>
+    </view>
+
+    <!-- 操作 -->
+    <view class="actions">
+      <view class="action-btn action-btn--primary" bindtap="onEditTap">编辑</view>
+      <view class="action-btn" bindtap="onCopyTap">复制</view>
+      <view class="action-btn action-btn--danger" bindtap="onDeleteTap">删除</view>
+    </view>
+  </block>
+</view>

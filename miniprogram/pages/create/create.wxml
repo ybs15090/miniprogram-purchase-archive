@@ -1,0 +1,3 @@
+<view class="page-body">
+  <item-form categories="{{categories}}" submitLabel="保存物品" bind:submit="onSubmit" />
+</view>

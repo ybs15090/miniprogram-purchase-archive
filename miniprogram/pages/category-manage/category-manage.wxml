@@ -1,0 +1,24 @@
+<view class="page-body manage-page">
+  <empty-state
+    wx:if="{{!loading && rows.length === 0}}"
+    text="还没有分类"
+    hint="点击下方“新增分类”创建第一个分类"
+  />
+
+  <view wx:else class="card row-list">
+    <view wx:for="{{rows}}" wx:key="id" class="row">
+      <view class="row-main">
+        <view class="row-name">{{item.name}}</view>
+        <view class="row-count">{{item.count}} 件物品</view>
+      </view>
+      <view class="row-ops">
+        <view class="op op--move" data-id="{{item.id}}" data-dir="up" bindtap="onMoveTap">上移</view>
+        <view class="op op--move" data-id="{{item.id}}" data-dir="down" bindtap="onMoveTap">下移</view>
+        <view class="op" data-id="{{item.id}}" bindtap="onRenameTap">改名</view>
+        <view class="op op--danger" data-id="{{item.id}}" bindtap="onDeleteTap">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="add-btn" bindtap="onAddTap">＋ 新增分类</view>
+</view>

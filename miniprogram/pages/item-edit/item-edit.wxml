@@ -1,0 +1,10 @@
+<view class="page-body">
+  <empty-state wx:if="{{notFound}}" text="物品不存在或已删除" hint="可能已被移入回收站" />
+  <item-form
+    wx:elif="{{item}}"
+    categories="{{categories}}"
+    initial="{{item}}"
+    submitLabel="保存修改"
+    bind:submit="onSubmit"
+  />
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "新建物品",
+  "usingComponents": {
+    "item-form": "/components/item-form/index"
+  }
+}

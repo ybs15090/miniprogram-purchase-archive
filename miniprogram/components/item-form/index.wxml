@@ -1,0 +1,150 @@
+<view class="form">
+  <!-- 基本信息 -->
+  <view class="section-title">基本信息</view>
+  <view class="card section">
+    <t-input label="标题" required mark placeholder="物品标题（必填）" value="{{title}}" bind:change="onTitleChange" />
+    <t-textarea
+      label="描述"
+      placeholder="补充描述（可选）"
+      value="{{description}}"
+      maxlength="500"
+      autosize
+      bind:change="onDescriptionChange"
+    />
+  </view>
+
+  <!-- 封面图片 -->
+  <view class="section-title">封面图片 <text class="required">*</text></view>
+  <view class="card section">
+    <view class="mode-row">
+      <view
+        wx:for="{{prefixOptions}}"
+        wx:key="key"
+        class="mode-chip {{coverMode === item.key ? 'mode-chip--active' : ''}}"
+        data-mode="{{item.key}}"
+        bindtap="onCoverModeTap"
+      >{{item.label}}</view>
+      <view
+        class="mode-chip {{coverMode === 'custom' ? 'mode-chip--active' : ''}}"
+        data-mode="custom"
+        bindtap="onCoverModeTap"
+      >自定义 URL</view>
+    </view>
+    <view wx:if="{{coverMode === 'raw'}}" class="mode-warning">raw.githubusercontent.com 当前网络环境实测不可用，仅作兼容选项，不建议选择</view>
+    <t-input
+      wx:if="{{coverMode !== 'custom'}}"
+      placeholder="图片路径，如 images/cover.jpg（将自动拼接前缀）"
+      value="{{coverPath}}"
+      bind:change="onCoverPathChange"
+    />
+    <t-input
+      wx:else
+      placeholder="完整 URL，如 https://…"
+      value="{{coverFull}}"
+      bind:change="onCoverFullChange"
+    />
+    <view wx:if="{{coverPreview}}" class="url-preview">
+      <text class="url-preview-label">完整 URL：</text>
+      <text class="url-preview-value">{{coverPreview}}</text>
+    </view>
+  </view>
+
+  <!-- 详情图片 -->
+  <view class="section-title">详情图片</view>
+  <view class="card section">
+    <view wx:if="{{detailImages.length === 0}}" class="detail-empty">暂无详情图，点击下方按钮逐条添加</view>
+    <view wx:for="{{detailImages}}" wx:key="uid" class="detail-row">
+      <view class="mode-row mode-row--compact">
+        <view
+          wx:for="{{prefixOptions}}"
+          wx:for-item="opt"
+          wx:key="key"
+          class="mode-chip mode-chip--sm {{item.mode === opt.key ? 'mode-chip--active' : ''}}"
+          data-uid="{{item.uid}}"
+          data-mode="{{opt.key}}"
+          bindtap="onRowModeTap"
+        >{{opt.label}}</view>
+        <view
+          class="mode-chip mode-chip--sm {{item.mode === 'custom' ? 'mode-chip--active' : ''}}"
+          data-uid="{{item.uid}}"
+          data-mode="custom"
+          bindtap="onRowModeTap"
+        >自定义</view>
+        <view class="row-actions">
+          <view class="row-action" data-uid="{{item.uid}}" data-dir="up" bindtap="onRowMove">上移</view>
+          <view class="row-action" data-uid="{{item.uid}}" data-dir="down" bindtap="onRowMove">下移</view>
+          <view class="row-action row-action--danger" data-uid="{{item.uid}}" bindtap="onRowRemove">删除</view>
+        </view>
+      </view>
+      <view wx:if="{{item.mode === 'raw'}}" class="mode-warning">raw 当前网络环境实测不可用</view>
+      <t-input
+        wx:if="{{item.mode !== 'custom'}}"
+        placeholder="图片路径（自动拼接前缀）"
+        value="{{item.path}}"
+        data-uid="{{item.uid}}"
+        bind:change="onRowPathChange"
+      />
+      <t-input
+        wx:else
+        placeholder="完整 URL：https://…"
+        value="{{item.full}}"
+        data-uid="{{item.uid}}"
+        bind:change="onRowFullChange"
+      />
+      <view wx:if="{{item.preview}}" class="url-preview url-preview--row">
+        <text class="url-preview-label">完整 URL：</text>
+        <text class="url-preview-value">{{item.preview}}</text>
+      </view>
+    </view>
+    <t-button theme="default" variant="outline" size="small" icon="add" bind:tap="onAddDetailImage">添加详情图</t-button>
+  </view>
+
+  <!-- 购买信息 -->
+  <view class="section-title">购买信息</view>
+  <view class="card section">
+    <t-input
+      label="实际支付总额"
+      required
+      mark
+      type="digit"
+      placeholder="元（必填，整笔总额）"
+      value="{{amountYuan}}"
+      bind:change="onAmountChange"
+    />
+    <view class="field-row">
+      <view class="field-label">购买数量 <text class="required">*</text></view>
+      <t-stepper value="{{quantity}}" min="1" max="9999" integer bind:change="onQuantityChange" />
+    </view>
+    <view class="field-row" bindtap="onDateTap">
+      <view class="field-label">购买时间 <text class="required">*</text></view>
+      <view class="field-value">{{purchaseDateText || '请选择'}}</view>
+    </view>
+    <t-input label="购买平台" placeholder="如：京东 / 淘宝（可选）" value="{{purchasePlatform}}" bind:change="onPlatformChange" />
+    <t-input label="订单编号" placeholder="原始订单号（可选）" value="{{orderNumber}}" bind:change="onOrderNumberChange" />
+    <t-input label="商品链接" placeholder="https://…（可选，仅显式打开）" value="{{productUrl}}" bind:change="onProductUrlChange" />
+  </view>
+
+  <!-- 分类 -->
+  <view class="section-title">分类</view>
+  <view class="card section">
+    <category-picker categories="{{categories}}" value="{{categoryIds}}" bind:change="onCategoryChange" />
+  </view>
+
+  <!-- 提交 -->
+  <view class="submit-wrap">
+    <t-button theme="primary" block size="large" bind:tap="onSubmit">{{submitLabel}}</t-button>
+  </view>
+
+  <!-- 购买日期选择器：format="" 使 confirm 返回时间戳；范围 1949-10-01 ~ 2049-10-01 -->
+  <t-date-time-picker
+    title="选择购买时间"
+    mode="date"
+    format=""
+    start="{{dateStart}}"
+    end="{{dateEnd}}"
+    visible="{{pickerVisible}}"
+    value="{{purchaseDate}}"
+    bind:confirm="onDateConfirm"
+    bind:cancel="onDateCancel"
+  />
+</view>

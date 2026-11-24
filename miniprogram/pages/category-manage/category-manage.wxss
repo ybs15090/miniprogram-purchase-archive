@@ -1,0 +1,75 @@
+.manage-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.row-list {
+  padding: 0 28rpx;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 0;
+  border-bottom: 1rpx solid #F0F2F4;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row-main {
+  min-width: 0;
+}
+
+.row-name {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #181818;
+}
+
+.row-count {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #A6ABB3;
+}
+
+.row-ops {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24rpx;
+  flex-shrink: 0;
+}
+
+.op {
+  font-size: 26rpx;
+  color: #266FE8;
+}
+
+.op--move {
+  color: #666666;
+}
+
+.op--danger {
+  color: #D54941;
+}
+
+.add-btn {
+  margin-top: 32rpx;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+  color: #0052D9;
+  font-size: 30rpx;
+  font-weight: 500;
+  box-shadow: 0 2rpx 12rpx rgba(24, 24, 24, 0.05);
+  transition: transform 0.15s ease;
+}
+
+.add-btn:active {
+  transform: scale(0.98);
+}

@@ -1,0 +1,81 @@
+.recycle-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.row-list {
+  padding: 0 24rpx;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F0F2F4;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row-cover {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  background: #EEF1F4;
+  flex-shrink: 0;
+}
+
+.row-cover--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #A6ABB3;
+  font-size: 40rpx;
+}
+
+.row-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: 20rpx;
+}
+
+.row-title {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #181818;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-meta {
+  margin-top: 8rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  font-size: 24rpx;
+  color: #A6ABB3;
+}
+
+.row-ops {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16rpx;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.op {
+  font-size: 26rpx;
+}
+
+.op--restore {
+  color: #0052D9;
+}
+
+.op--danger {
+  color: #D54941;
+}

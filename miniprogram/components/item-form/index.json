@@ -1,0 +1,11 @@
+{
+  "component": true,
+  "usingComponents": {
+    "t-input": "/miniprogram_npm/tdesign-miniprogram/input/input",
+    "t-textarea": "/miniprogram_npm/tdesign-miniprogram/textarea/textarea",
+    "t-stepper": "/miniprogram_npm/tdesign-miniprogram/stepper/stepper",
+    "t-button": "/miniprogram_npm/tdesign-miniprogram/button/button",
+    "t-date-time-picker": "/miniprogram_npm/tdesign-miniprogram/date-time-picker/date-time-picker",
+    "category-picker": "/components/category-picker/index"
+  }
+}
