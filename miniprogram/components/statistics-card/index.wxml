@@ -1,0 +1,5 @@
+<view class="stat-card card">
+  <view class="stat-label">{{label}}</view>
+  <view class="stat-value {{size === 'small' ? 'stat-value--small' : ''}}">{{value}}</view>
+  <view wx:if="{{hint}}" class="stat-hint">{{hint}}</view>
+</view>

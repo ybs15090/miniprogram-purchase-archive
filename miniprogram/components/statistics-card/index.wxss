@@ -1,0 +1,30 @@
+.stat-card {
+  padding: 26rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.4;
+}
+
+.stat-value {
+  margin-top: 10rpx;
+  font-size: 42rpx;
+  font-weight: 600;
+  color: #0052D9;
+  line-height: 1.2;
+  word-break: break-all;
+}
+
+.stat-value--small {
+  font-size: 34rpx;
+}
+
+.stat-hint {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #A6ABB3;
+}
