@@ -1,0 +1,17 @@
+<view class="page-body cache-page">
+  <view class="summary-grid">
+    <statistics-card label="缓存文件数" value="{{fileCountText}}" hint="个图片文件" />
+    <statistics-card label="占用空间" value="{{sizeText}}" />
+  </view>
+
+  <view class="section-title">说明</view>
+  <view class="card desc-card">
+    <view class="desc-line">· 图片首次加载时自动下载到本地，后续优先读本地缓存。</view>
+    <view class="desc-line">· 不做自动清理，可在此一键清空释放空间。</view>
+    <view class="desc-line">· 清空后图片将回退为从网络加载。</view>
+  </view>
+
+  <view class="clear-btn {{clearing ? 'clear-btn--disabled' : ''}}" bindtap="onClearTap">
+    {{clearing ? '清理中…' : '一键清空缓存'}}
+  </view>
+</view>

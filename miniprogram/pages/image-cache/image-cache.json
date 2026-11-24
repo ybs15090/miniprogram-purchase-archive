@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "图片缓存管理",
+  "usingComponents": {
+    "statistics-card": "/components/statistics-card/index"
+  }
+}

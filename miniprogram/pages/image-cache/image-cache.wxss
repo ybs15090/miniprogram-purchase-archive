@@ -1,0 +1,53 @@
+.cache-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+.summary-grid > statistics-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-title {
+  margin: 36rpx 4rpx 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #181818;
+}
+
+.desc-card {
+  padding: 28rpx;
+}
+
+.desc-line {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.8;
+}
+
+.clear-btn {
+  margin-top: 40rpx;
+  text-align: center;
+  padding: 26rpx 0;
+  border-radius: 16rpx;
+  background: #FFFFFF;
+  color: #D54941;
+  font-size: 30rpx;
+  font-weight: 500;
+  box-shadow: 0 2rpx 12rpx rgba(24, 24, 24, 0.05);
+  transition: transform 0.15s ease;
+}
+
+.clear-btn:active {
+  transform: scale(0.98);
+}
+
+.clear-btn--disabled {
+  color: #A6ABB3;
+}
