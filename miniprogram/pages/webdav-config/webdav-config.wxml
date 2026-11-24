@@ -1,0 +1,30 @@
+<view class="page-body webdav-page">
+  <view class="card notice-card">
+    <view class="notice-title">仅配置，不传输</view>
+    <view class="notice-text">POC-08 端到端验证前，本页不会发起连接测试、上传、下载或恢复。</view>
+    <view class="notice-text">请在坚果云预先创建远程目录；应用不会枚举或创建目录。</view>
+  </view>
+
+  <view class="section-title">服务器与账号</view>
+  <view class="card form-card">
+    <t-input label="服务器" placeholder="https://dav.jianguoyun.com/dav/" value="{{serverUrl}}" bind:change="onServerChange" />
+    <t-input label="远程目录" placeholder="PurchaseArchive/" value="{{remoteDir}}" bind:change="onRemoteDirChange" />
+    <t-input label="账号邮箱" placeholder="坚果云账号邮箱" value="{{username}}" bind:change="onUsernameChange" />
+    <t-input label="应用密码" type="password" placeholder="坚果云应用密码" value="{{appPassword}}" bind:change="onPasswordChange" />
+    <view class="remember-row">
+      <view>
+        <view class="remember-title">记住应用密码</view>
+        <view class="remember-note">关闭时凭据仅保留在本页内存</view>
+      </view>
+      <t-switch value="{{remember}}" bind:change="onRememberChange" />
+    </view>
+  </view>
+
+  <view class="security-note">Basic Auth 仅在 HTTPS 下使用。开启记住后，账号和应用密码会保存在本机微信 Storage；不会进入导出 JSON 或日志。</view>
+  <view wx:if="{{hasSavedCredentials}}" class="saved-status">当前已保存凭据</view>
+
+  <view class="actions">
+    <t-button theme="primary" size="large" block loading="{{saving}}" bind:tap="onSaveTap">保存配置</t-button>
+    <t-button theme="danger" variant="outline" size="large" block bind:tap="onClearTap">清除授权信息</t-button>
+  </view>
+</view>

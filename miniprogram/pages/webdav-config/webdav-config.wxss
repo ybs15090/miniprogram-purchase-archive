@@ -1,0 +1,64 @@
+.notice-card {
+  padding: 28rpx;
+}
+
+.notice-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 14rpx;
+}
+
+.notice-text,
+.security-note {
+  color: #666666;
+  font-size: 26rpx;
+  line-height: 1.7;
+}
+
+.notice-text + .notice-text {
+  margin-top: 8rpx;
+}
+
+.section-title {
+  margin: 36rpx 4rpx 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.form-card {
+  overflow: hidden;
+}
+
+.remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 24rpx;
+}
+
+.remember-title {
+  font-size: 29rpx;
+}
+
+.remember-note {
+  margin-top: 8rpx;
+  color: #888888;
+  font-size: 24rpx;
+}
+
+.security-note {
+  padding: 20rpx 8rpx 0;
+}
+
+.saved-status {
+  margin: 20rpx 8rpx 0;
+  color: #2BA471;
+  font-size: 25rpx;
+}
+
+.actions {
+  margin-top: 36rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
