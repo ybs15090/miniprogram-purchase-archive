@@ -1,0 +1,58 @@
+.mine-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+.summary-grid--second {
+  margin-top: 16rpx;
+}
+
+.summary-grid > statistics-card {
+  flex: 1;
+  min-width: 0;
+}
+
+/* "数据管理"区块（标题、入口列表、注脚）按要求保持字号不变 */
+
+.section-title {
+  margin-top: 36rpx;
+  margin-bottom: 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #181818;
+}
+
+.entry-group {
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.footnote {
+  margin-top: 48rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #A6ABB3;
+}
+
+.db-error {
+  padding: 32rpx;
+}
+
+.db-error-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #D54941;
+}
+
+.db-error-text {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.6;
+}

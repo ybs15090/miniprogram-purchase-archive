@@ -1,0 +1,37 @@
+<view class="page-body mine-page">
+  <!-- 数据库损坏：可恢复错误态，禁止静默写入 -->
+  <view wx:if="{{dbError}}" class="card db-error">
+    <view class="db-error-title">本地数据异常</view>
+    <view class="db-error-text">两份数据库副本均无法读取，已停止写入以保护数据。请使用已有备份文件按恢复流程处理，应用不会自动修复。</view>
+  </view>
+
+  <block wx:else>
+    <!-- 四项统计 -->
+    <view class="summary-grid">
+      <statistics-card label="有效物品" value="{{validCountText}}" hint="条记录" />
+      <statistics-card label="累计支出" value="{{totalAmountText}}" hint="单位：元" size="small" />
+    </view>
+    <view class="summary-grid summary-grid--second">
+      <statistics-card label="平均单件支出" value="{{averageText}}" hint="总额 ÷ 总数量" size="small" />
+      <statistics-card label="分类数" value="{{categoryCountText}}" hint="个分类" />
+    </view>
+
+    <!-- 管理入口 -->
+    <view class="section-title">数据管理</view>
+    <t-cell-group theme="card" class="entry-group">
+      <t-cell
+        wx:for="{{entries}}"
+        wx:key="key"
+        title="{{item.title}}"
+        description="{{item.note}}"
+        note="{{item.stage ? item.stage + '开放' : ''}}"
+        arrow
+        hover
+        data-key="{{item.key}}"
+        bindtap="onEntryTap"
+      />
+    </t-cell-group>
+
+    <view class="footnote">个人物品档案 · 本地存储 · 无云端账号</view>
+  </block>
+</view>
