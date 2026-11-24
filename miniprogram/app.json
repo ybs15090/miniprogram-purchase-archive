@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/category/category",
+    "pages/create/create",
+    "pages/mine/mine",
+    "pages/item-detail/item-detail",
+    "pages/item-edit/item-edit",
+    "pages/category-manage/category-manage",
+    "pages/recycle-bin/recycle-bin",
+    "pages/image-cache/image-cache",
+    "pages/backup/backup",
+    "pages/webdav-config/webdav-config"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "购买产品图文展示",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#F5F6F8"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#666666",
+    "selectedColor": "#0052D9",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类"
+      },
+      {
+        "pagePath": "pages/create/create",
+        "text": "新建"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "lazyCodeLoading": "requiredComponents"
+}

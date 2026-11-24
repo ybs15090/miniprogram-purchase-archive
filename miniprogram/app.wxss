@@ -1,0 +1,22 @@
+/**app.wxss 全局样式**/
+page {
+  background: #F5F6F8;
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-size: 30rpx;
+  color: #181818;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 页面通用容器：避开自定义 TabBar */
+.page-body {
+  padding: 24rpx 24rpx 160rpx;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+/* 通用卡片 */
+.card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(24, 24, 24, 0.04);
+}
