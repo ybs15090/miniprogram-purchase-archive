@@ -1,0 +1,22 @@
+<view class="poc-page">
+  <view class="poc-page__info">
+    <text>USER_DATA_PATH: {{userDataPath}}</text>
+  </view>
+  <view class="poc-page__buttons">
+    <button size="mini" bindtap="runDirTest">1. 目录创建</button>
+    <button size="mini" bindtap="runWriteReadTest">2. 写入/读取/覆盖</button>
+    <button size="mini" bindtap="runStatTest">3. 文件信息</button>
+    <button size="mini" bindtap="runDeleteTest">4. 删除文件</button>
+    <button size="mini" bindtap="runDbAbTest">5. A/B 双版本数据库</button>
+    <button size="mini" bindtap="runCorruptTest">6. 损坏文件处理</button>
+    <button size="mini" bindtap="runListTest">7. 列目录</button>
+    <button size="mini" type="warn" bindtap="runClearTest">清理 PoC 文件</button>
+  </view>
+  <view class="poc-page__logs">
+    <view wx:for="{{logs}}" wx:key="index" class="log-entry log-entry--{{item.status}}">
+      <text class="log-time">{{item.time}}</text>
+      <text class="log-title">{{item.title}}</text>
+      <text class="log-detail">{{item.detail}}</text>
+    </view>
+  </view>
+</view>

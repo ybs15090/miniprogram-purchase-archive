@@ -1,0 +1,41 @@
+<view class="poc-page">
+  <view class="poc-page__form">
+    <view class="form-row">
+      <text class="form-label">WebDAV 地址</text>
+      <input class="form-input" value="{{webdavBase}}" bindinput="onInputBase" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">账号邮箱</text>
+      <input class="form-input" value="{{webdavAccount}}" bindinput="onInputAccount" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">应用密码</text>
+      <input class="form-input" password value="{{webdavPassword}}" bindinput="onInputPassword" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">远程目录</text>
+      <input class="form-input" value="{{remoteDir}}" bindinput="onInputDir" />
+    </view>
+  </view>
+
+  <view class="poc-page__buttons">
+    <button size="mini" bindtap="testConnection">1. 测试连接(HEAD)</button>
+    <button size="mini" bindtap="testPut">2. PUT 上传探测</button>
+    <button size="mini" bindtap="testGet">3. GET 下载探测</button>
+    <button size="mini" bindtap="testDelete">4. DELETE 删除探测</button>
+    <button size="mini" bindtap="testPropfind">5. PROPFIND 边界</button>
+    <button size="mini" bindtap="testMkcol">6. MKCOL 边界</button>
+  </view>
+
+  <view class="poc-page__notice">
+    <text>应用密码仅存于内存，不写入存储与日志；请在合法域名校验开启 + 真机下验证。</text>
+  </view>
+
+  <view class="poc-page__logs">
+    <view wx:for="{{logs}}" wx:key="index" class="log-entry log-entry--{{item.status}}">
+      <text class="log-time">{{item.time}}</text>
+      <text class="log-title">{{item.title}}</text>
+      <text class="log-detail">{{item.detail}}</text>
+    </view>
+  </view>
+</view>

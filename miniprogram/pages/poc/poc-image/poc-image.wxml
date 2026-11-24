@@ -1,0 +1,24 @@
+<view class="poc-page">
+  <view class="poc-page__buttons">
+    <button size="mini" bindtap="testDownloadGcore">1. 下载 gcore.jsdelivr.net</button>
+    <button size="mini" bindtap="testDownloadRaw">2. 下载 raw.githubusercontent.com</button>
+    <button size="mini" bindtap="testSaveCache">3. 保存到本地缓存</button>
+    <button size="mini" bindtap="testShowLocal">4. 显示本地路径图片</button>
+    <button size="mini" bindtap="testGetImageInfo">5. 图片信息/解码</button>
+    <button size="mini" bindtap="testBadImage">6. 坏图处理(404)</button>
+    <button size="mini" type="warn" bindtap="testClearCache">清理缓存</button>
+  </view>
+
+  <view class="poc-page__preview">
+    <image wx:if="{{displayedSrc}}" src="{{displayedSrc}}" mode="widthFix" class="preview-img" />
+    <view wx:else class="preview-empty">执行“显示本地路径图片”后在此预览</view>
+  </view>
+
+  <view class="poc-page__logs">
+    <view wx:for="{{logs}}" wx:key="index" class="log-entry log-entry--{{item.status}}">
+      <text class="log-time">{{item.time}}</text>
+      <text class="log-title">{{item.title}}</text>
+      <text class="log-detail">{{item.detail}}</text>
+    </view>
+  </view>
+</view>
