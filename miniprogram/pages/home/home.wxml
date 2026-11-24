@@ -1,0 +1,57 @@
+<view class="page-body home-page">
+  <!-- 搜索栏 -->
+  <view class="search-row">
+    <t-search
+      value="{{keyword}}"
+      placeholder="搜索物品标题"
+      center="{{false}}"
+      bind:change="onSearchChange"
+      bind:clear="onSearchClear"
+    />
+  </view>
+
+  <!-- 工具行：排序 + 布局切换 -->
+  <view class="toolbar">
+    <scroll-view class="sort-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="sort-list">
+        <view
+          wx:for="{{sortOptions}}"
+          wx:key="key"
+          class="sort-chip {{sortKey === item.key ? 'sort-chip--active' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onSortTap"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </scroll-view>
+    <view class="layout-toggle" bindtap="onToggleLayout">
+      <text>{{layout === 'double' ? '⇲' : '⇔'}}</text>
+    </view>
+  </view>
+
+  <!-- 数据库损坏：可恢复错误态 -->
+  <view wx:if="{{dbError}}" class="card db-error">
+    <view class="db-error-title">本地数据异常</view>
+    <view class="db-error-text">两份数据库副本均无法读取，已停止写入以保护数据。请通过"我的 → 数据备份"尝试恢复。</view>
+  </view>
+
+  <!-- 空态 -->
+  <empty-state
+    wx:elif="{{!loading && cards.length === 0}}"
+    text="{{keyword ? '没有找到匹配的物品' : '还没有物品记录'}}"
+    hint="{{keyword ? '换个关键词试试' : '点击底部“新建”添加第一件物品'}}"
+  />
+
+  <!-- 物品列表 -->
+  <view wx:else class="list {{layout === 'double' ? 'list--grid' : 'list--rows'}}">
+    <block wx:for="{{cards}}" wx:key="item.id">
+      <item-card
+        item="{{item.item}}"
+        layout="{{layout}}"
+        categoryNames="{{item.categoryNames}}"
+        bind:cardtap="onCardTap"
+      />
+    </block>
+  </view>
+</view>

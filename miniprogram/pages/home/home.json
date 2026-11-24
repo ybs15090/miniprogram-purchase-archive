@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "我的物品",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "t-search": "/miniprogram_npm/tdesign-miniprogram/search/search",
+    "item-card": "/components/item-card/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

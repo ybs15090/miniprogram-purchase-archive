@@ -1,0 +1,141 @@
+.category-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 16rpx;
+}
+
+.summary-grid > statistics-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.section {
+  margin-top: 28rpx;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #181818;
+}
+
+.match-toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.match-toggle-label {
+  font-size: 28rpx;
+  color: #0052D9;
+  font-weight: 500;
+}
+
+.match-toggle-hint {
+  margin-top: 2rpx;
+  font-size: 24rpx;
+  color: #A6ABB3;
+}
+
+.range-list {
+  margin-top: 16rpx;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.range-chip {
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  color: #666666;
+  background: #FFFFFF;
+  transition: all 0.15s ease;
+}
+
+.range-chip--active {
+  color: #FFFFFF;
+  background: #0052D9;
+  font-weight: 500;
+}
+
+.tag-list {
+  margin-top: 16rpx;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  background: #FFFFFF;
+  color: #333333;
+  font-size: 30rpx;
+  transition: all 0.15s ease;
+}
+
+.tag--active {
+  background: rgba(0, 82, 217, 0.10);
+  color: #0052D9;
+  border: 1rpx solid rgba(0, 82, 217, 0.4);
+}
+
+.tag-count {
+  font-size: 24rpx;
+  color: #A6ABB3;
+}
+
+.tag--active .tag-count {
+  color: #266FE8;
+}
+
+.category-empty {
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  color: #A6ABB3;
+}
+
+.clear-filter {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #E37318;
+}
+
+.hit-list {
+  margin-top: 16rpx;
+}
+
+.db-error {
+  padding: 32rpx;
+}
+
+.db-error-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #D54941;
+}
+
+.db-error-text {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.6;
+}

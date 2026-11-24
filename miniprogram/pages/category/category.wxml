@@ -1,0 +1,70 @@
+<view class="page-body category-page">
+  <!-- 数据库损坏：可恢复错误态 -->
+  <view wx:if="{{dbError}}" class="card db-error">
+    <view class="db-error-title">本地数据异常</view>
+    <view class="db-error-text">两份数据库副本均无法读取，已停止写入以保护数据。</view>
+  </view>
+
+  <block wx:else>
+    <!-- 汇总统计（当前筛选口径） -->
+    <view class="summary-grid">
+      <statistics-card label="有效物品" value="{{validCountText}}" />
+      <statistics-card label="累计支出" value="{{totalAmountText}}" hint="单位：元" size="small" />
+      <statistics-card label="平均单件" value="{{averageText}}" hint="单位：元" size="small" />
+    </view>
+
+    <!-- 日期范围筛选 -->
+    <view class="section">
+      <view class="section-title">购买时间</view>
+      <view class="range-list">
+        <view
+          wx:for="{{rangeOptions}}"
+          wx:key="key"
+          class="range-chip {{rangeKey === item.key ? 'range-chip--active' : ''}}"
+          data-key="{{item.key}}"
+          bindtap="onRangeTap"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 分类多选 + OR/AND -->
+    <view class="section">
+      <view class="section-head">
+        <view class="section-title">分类筛选</view>
+        <view class="match-toggle" bindtap="onMatchModeToggle">
+          <text class="match-toggle-label">{{matchMode === 'OR' ? '任意分类' : '同时包含'}}</text>
+          <text class="match-toggle-hint">点击切换（当前：{{matchMode === 'OR' ? 'OR' : 'AND'}}）</text>
+        </view>
+      </view>
+      <view wx:if="{{categories.length === 0}}" class="category-empty">
+        还没有分类，可在阶段 4 的分类管理中创建
+      </view>
+      <view wx:else class="tag-list">
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="tag {{item.selected ? 'tag--active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onCategoryToggle"
+        >
+          <text>{{item.name}}</text>
+          <text class="tag-count">{{item.count}}</text>
+        </view>
+      </view>
+      <view wx:if="{{selectedIds.length > 0}}" class="clear-filter" bindtap="onClearFilter">清除筛选</view>
+    </view>
+
+    <!-- 命中物品 -->
+    <view class="section">
+      <view class="section-title">物品（{{cards.length}}）</view>
+      <empty-state wx:if="{{!loading && cards.length === 0}}" text="当前筛选没有命中物品" hint="调整分类或时间范围" />
+      <view wx:else class="hit-list">
+        <block wx:for="{{cards}}" wx:key="item.id">
+          <item-card item="{{item.item}}" layout="single" categoryNames="{{item.categoryNames}}" />
+        </block>
+      </view>
+    </view>
+  </block>
+</view>

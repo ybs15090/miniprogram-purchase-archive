@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "分类",
+  "usingComponents": {
+    "item-card": "/components/item-card/index",
+    "statistics-card": "/components/statistics-card/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

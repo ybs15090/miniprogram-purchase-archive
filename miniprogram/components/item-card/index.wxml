@@ -1,0 +1,46 @@
+<!-- 双列：封面 / 标题 / 支付总额 -->
+<view wx:if="{{layout === 'double'}}" class="card-double item-card-root" bindtap="onCardTap">
+  <view class="cover-wrap">
+    <image
+      wx:if="{{!coverFailed}}"
+      class="cover"
+      src="{{coverSrc}}"
+      mode="aspectFill"
+      lazy-load="{{true}}"
+      binderror="onCoverError"
+    />
+    <view wx:else class="cover cover-placeholder">
+      <text class="cover-placeholder-icon">🖼</text>
+      <text class="cover-placeholder-text">暂无图片</text>
+    </view>
+  </view>
+  <view class="double-body">
+    <view class="title">{{item.title}}</view>
+    <view class="amount">{{amountText}}</view>
+  </view>
+</view>
+
+<!-- 单列：横向信息卡，补充分类与购买日期 -->
+<view wx:else class="card-single card item-card-root" bindtap="onCardTap">
+  <view class="single-cover-wrap">
+    <image
+      wx:if="{{!coverFailed}}"
+      class="single-cover"
+      src="{{coverSrc}}"
+      mode="aspectFill"
+      lazy-load="{{true}}"
+      binderror="onCoverError"
+    />
+    <view wx:else class="single-cover single-cover-placeholder">
+      <text>🖼</text>
+    </view>
+  </view>
+  <view class="single-body">
+    <view class="title">{{item.title}}</view>
+    <view class="amount">{{amountText}}</view>
+    <view class="meta">
+      <text wx:if="{{dateText}}" class="meta-date">{{dateText}}</text>
+      <text wx:for="{{categoryNames}}" wx:key="*this" class="meta-tag">{{item}}</text>
+    </view>
+  </view>
+</view>
