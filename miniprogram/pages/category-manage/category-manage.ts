@@ -1,5 +1,6 @@
 // pages/category-manage/category-manage.ts
 // 分类管理：新增、改名、排序（上移/下移）、删除（影响提示 + 级联清理）。
+import { toastInfo, toastSuccess } from '../../utils/toast'
 import { categoryService } from '../../services/category-service'
 
 interface CategoryRow {
@@ -28,7 +29,7 @@ Page({
       })
     } catch {
       this.setData({ loading: false })
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      toastInfo('加载失败')
     }
   },
 
@@ -44,11 +45,11 @@ Page({
         categoryService
           .create(name)
           .then(() => {
-            wx.showToast({ title: '已新增', icon: 'success' })
+            toastSuccess('已新增')
             this.refresh()
           })
           .catch((err) => {
-            wx.showToast({ title: err instanceof Error ? err.message : '新增失败', icon: 'none' })
+            toastInfo(err instanceof Error ? err.message : '新增失败')
           })
       },
     })
@@ -69,11 +70,11 @@ Page({
         categoryService
           .rename(id, name)
           .then(() => {
-            wx.showToast({ title: '已保存', icon: 'success' })
+            toastSuccess('已保存')
             this.refresh()
           })
           .catch((err) => {
-            wx.showToast({ title: err instanceof Error ? err.message : '重命名失败', icon: 'none' })
+            toastInfo(err instanceof Error ? err.message : '重命名失败')
           })
       },
     })
@@ -93,7 +94,7 @@ Page({
       await categoryService.reorder(ids)
       this.refresh()
     } catch {
-      wx.showToast({ title: '排序失败', icon: 'none' })
+      toastInfo('排序失败')
     }
   },
 
@@ -118,13 +119,13 @@ Page({
             categoryService
               .removeWithCascade(id)
               .then(() => {
-                wx.showToast({ title: '已删除', icon: 'success' })
+                toastSuccess('已删除')
                 this.refresh()
               })
-              .catch(() => wx.showToast({ title: '删除失败', icon: 'none' }))
+              .catch(() => toastInfo('删除失败'))
           },
         })
       })
-      .catch(() => wx.showToast({ title: '无法评估影响', icon: 'none' }))
+      .catch(() => toastInfo('无法评估影响'))
   },
 })

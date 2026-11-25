@@ -1,6 +1,7 @@
 // components/item-form/index.ts
 // 物品表单：新建与编辑共用。字段校验复用 services/item-service 的 validateItemDraft。
 // URL 前缀模式：gcore（默认）/ raw（提示网络不可用）/ 自定义完整 URL。
+import { toastInfo } from '../../utils/toast'
 import type { Item } from '../../models/item'
 import type { Category } from '../../models/category'
 import type { ItemDraft } from '../../services/item-service'
@@ -148,7 +149,7 @@ Component({
       if (mode === this.data.coverMode) return
       this.setData({ coverMode: mode })
       if (mode === 'raw') {
-        wx.showToast({ title: 'raw 当前网络环境实测不可用，仅作兼容选项', icon: 'none', duration: 2000 })
+        toastInfo('raw 当前网络环境实测不可用，仅作兼容选项', 2000)
       }
     },
     onCoverPathChange(e: WechatMiniprogram.CustomEvent) {
@@ -209,7 +210,7 @@ Component({
       )
       this.setData({ detailImages: rows })
       if (mode === 'raw') {
-        wx.showToast({ title: 'raw 当前网络环境实测不可用，仅作兼容选项', icon: 'none', duration: 2000 })
+        toastInfo('raw 当前网络环境实测不可用，仅作兼容选项', 2000)
       }
     },
     onRowPathChange(e: WechatMiniprogram.CustomEvent) {
@@ -250,7 +251,7 @@ Component({
     onSubmit() {
       const coverUrl = this.data.coverPreview
       if (coverUrl && !isHttpUrl(coverUrl)) {
-        wx.showToast({ title: '封面图片 URL 格式不正确', icon: 'none' })
+        toastInfo('封面图片 URL 格式不正确')
         return
       }
       const detailUrls: string[] = []
@@ -258,7 +259,7 @@ Component({
         const url = row.preview
         if (!url) continue
         if (!isHttpUrl(url)) {
-          wx.showToast({ title: `详情图 ${detailUrls.length + 1} 的 URL 无效`, icon: 'none' })
+          toastInfo(`详情图 ${detailUrls.length + 1} 的 URL 无效`)
           return
         }
         detailUrls.push(url)
@@ -266,7 +267,7 @@ Component({
 
       const yuan = parseFloat(this.data.amountYuan)
       if (!Number.isFinite(yuan) || yuan < 0) {
-        wx.showToast({ title: '请输入有效的支付金额', icon: 'none' })
+        toastInfo('请输入有效的支付金额')
         return
       }
 
@@ -288,7 +289,7 @@ Component({
 
       const result = validateItemDraft(draft, this.data.categories as Category[])
       if (!result.valid) {
-        wx.showToast({ title: result.errors[0] ?? '表单校验未通过', icon: 'none' })
+        toastInfo(result.errors[0] ?? '表单校验未通过')
         return
       }
       this.triggerEvent('submit', { draft })

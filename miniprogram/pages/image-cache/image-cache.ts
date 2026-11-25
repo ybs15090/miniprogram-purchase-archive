@@ -1,5 +1,6 @@
 // pages/image-cache/image-cache.ts
 // 图片缓存管理：展示占用（文件数 + 总大小）、一键清空。
+import { toastInfo, toastSuccess } from '../../utils/toast'
 import { getStats, clearAll } from '../../services/image-cache-service'
 
 function formatBytes(bytes: number): string {
@@ -27,7 +28,7 @@ Page({
         sizeText: formatBytes(stats.totalBytes),
       })
     } catch {
-      wx.showToast({ title: '统计失败', icon: 'none' })
+      toastInfo('统计失败')
     }
   },
 
@@ -49,10 +50,10 @@ Page({
     this.setData({ clearing: true })
     try {
       await clearAll()
-      wx.showToast({ title: '已清空', icon: 'success' })
+      toastSuccess('已清空')
       this.refresh()
     } catch {
-      wx.showToast({ title: '清空失败', icon: 'none' })
+      toastInfo('清空失败')
     } finally {
       this.setData({ clearing: false })
     }

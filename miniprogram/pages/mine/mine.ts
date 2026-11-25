@@ -1,5 +1,6 @@
 // pages/mine/mine.ts
 // 我的页：四项统计、数据管理、缓存管理与 WebDAV 配置入口。
+import { toastInfo } from '../../utils/toast'
 import { statisticsService } from '../../services/statistics-service'
 import type { StatisticsSummary } from '../../services/statistics-service'
 import { fenToYuan } from '../../utils/money'
@@ -63,7 +64,7 @@ Page({
       if (e instanceof DatabaseCorruptedError) {
         this.setData({ dbError: true })
       } else {
-        wx.showToast({ title: '加载失败，请重试', icon: 'none' })
+        toastInfo('加载失败，请重试')
       }
     }
   },
@@ -77,7 +78,7 @@ Page({
     }
     const entry = ENTRIES.find((it) => it.key === key)
     if (entry) {
-      wx.showToast({ title: `${entry.title}将在${entry.stage}开放`, icon: 'none' })
+      toastInfo(`${entry.title}将在${entry.stage}开放`)
     }
   },
 })

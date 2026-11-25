@@ -1,5 +1,6 @@
 // pages/webdav-config/webdav-config.ts
 // WebDAV 配置、凭据管理、连接测试、云端备份与恢复。
+import { toastInfo, toastSuccess, errorMessage } from '../../utils/toast'
 import type { WebDavConfig } from '../../services/webdav-client'
 import {
   checkWebDavConnection,
@@ -87,7 +88,7 @@ Page({
     if (!remember) {
       removeStorage(STORAGE_KEYS.webdavAuth)
       this.setData({ hasSavedCredentials: false })
-      wx.showToast({ title: '已删除本地保存的凭据', icon: 'none' })
+      toastInfo('已删除本地保存的凭据')
     }
   },
 
@@ -97,15 +98,15 @@ Page({
     const username = this.data.username.trim()
     const appPassword = this.data.appPassword
     if (!validHttpsUrl(serverUrl)) {
-      wx.showToast({ title: '服务器地址必须使用有效 HTTPS URL', icon: 'none' })
+      toastInfo('服务器地址必须使用有效 HTTPS URL')
       return null
     }
     if (!remoteDir || remoteDir.split('/').some((part) => !part || part === '.' || part === '..')) {
-      wx.showToast({ title: '请填写有效的预建远程目录', icon: 'none' })
+      toastInfo('请填写有效的预建远程目录')
       return null
     }
     if (!username || !appPassword) {
-      wx.showToast({ title: '请填写账号和应用密码', icon: 'none' })
+      toastInfo('请填写账号和应用密码')
       return null
     }
     this.setData({ serverUrl, remoteDir, username })
@@ -125,12 +126,9 @@ Page({
         removeStorage(STORAGE_KEYS.webdavAuth)
       }
       this.setData({ hasSavedCredentials: this.data.remember })
-      wx.showToast({
-        title: this.data.remember ? '配置与凭据已保存' : '配置仅保留在本页内存',
-        icon: 'none',
-      })
+      toastInfo(this.data.remember ? '配置与凭据已保存' : '配置仅保留在本页内存')
     } catch {
-      wx.showToast({ title: '配置保存失败', icon: 'none' })
+      toastInfo('配置保存失败')
     } finally {
       this.setData({ saving: false })
     }
@@ -149,7 +147,7 @@ Page({
       })
     } catch (error) {
       this.setData({
-        cloudStatus: error instanceof Error ? error.message : String(error),
+        cloudStatus: errorMessage(error),
         cloudStatusOk: false,
       })
     } finally {
@@ -169,10 +167,10 @@ Page({
         cloudStatusOk: true,
         lastBackupText: `有效 ${result.activeItems} 条 / 回收站 ${result.deletedItems} 条 / 分类 ${result.categories} 个`,
       })
-      wx.showToast({ title: '云端备份完成', icon: 'success' })
+      toastSuccess('云端备份完成')
     } catch (error) {
       this.setData({
-        cloudStatus: error instanceof Error ? error.message : String(error),
+        cloudStatus: errorMessage(error),
         cloudStatusOk: false,
       })
     } finally {
@@ -204,10 +202,10 @@ Page({
         cloudStatusOk: true,
         lastBackupText: `有效 ${entry.activeItems} 条 / 回收站 ${entry.deletedItems} 条 / 分类 ${entry.categories} 个`,
       })
-      wx.showToast({ title: '云端恢复完成', icon: 'success' })
+      toastSuccess('云端恢复完成')
     } catch (error) {
       this.setData({
-        cloudStatus: error instanceof Error ? error.message : String(error),
+        cloudStatus: errorMessage(error),
         cloudStatusOk: false,
       })
     } finally {
@@ -235,7 +233,7 @@ Page({
           remember: false,
           hasSavedCredentials: false,
         })
-        wx.showToast({ title: '授权信息已清除', icon: 'none' })
+        toastInfo('授权信息已清除')
       },
     })
   },

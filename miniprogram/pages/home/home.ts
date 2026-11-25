@@ -1,5 +1,6 @@
 // pages/home/home.ts
 // 首页：搜索、排序、单/双列切换、物品卡片列表。数据统一经 Service 获取。
+import { toastInfo } from '../../utils/toast'
 import type { Item } from '../../models/item'
 import { itemService, queryItems } from '../../services/item-service'
 import type { SortKey } from '../../services/item-service'
@@ -84,7 +85,7 @@ Page({
         this.setData({ dbError: true, loading: false })
       } else {
         this.setData({ loading: false })
-        wx.showToast({ title: '加载失败，请重试', icon: 'none' })
+        toastInfo('加载失败，请重试')
       }
     }
   },

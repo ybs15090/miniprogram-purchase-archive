@@ -1,5 +1,6 @@
 // pages/item-detail/item-detail.ts
 // 物品详情：封面、字段、分类、详情图预览、编辑/复制/软删除/显式打开商品链接。
+import { toastInfo, toastSuccess } from '../../utils/toast'
 import type { Item } from '../../models/item'
 import { itemService } from '../../services/item-service'
 import { categoryService } from '../../services/category-service'
@@ -83,7 +84,7 @@ Page({
       }
       wx.nextTick(() => this.observeDetailImages())
     } catch {
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      toastInfo('加载失败')
     }
   },
 
@@ -183,13 +184,13 @@ Page({
           .duplicate(item.id)
           .then((copy) => {
             if (copy) {
-              wx.showToast({ title: '已创建副本', icon: 'success' })
+              toastSuccess('已创建副本')
               setTimeout(() => {
                 wx.redirectTo({ url: `${ROUTES.itemDetail}?id=${copy.id}` })
               }, 400)
             }
           })
-          .catch(() => wx.showToast({ title: '复制失败', icon: 'none' }))
+          .catch(() => toastInfo('复制失败'))
       },
     })
   },
@@ -207,10 +208,10 @@ Page({
         itemService
           .softDelete(item.id)
           .then(() => {
-            wx.showToast({ title: '已移入回收站', icon: 'success' })
+            toastSuccess('已移入回收站')
             setTimeout(() => wx.navigateBack(), 400)
           })
-          .catch(() => wx.showToast({ title: '删除失败', icon: 'none' }))
+          .catch(() => toastInfo('删除失败'))
       },
     })
   },
@@ -222,7 +223,7 @@ Page({
     wx.setClipboardData({
       data: item.productUrl,
       success: () => {
-        wx.showToast({ title: '链接已复制，请在浏览器打开', icon: 'none' })
+        toastInfo('链接已复制，请在浏览器打开')
       },
     })
   },

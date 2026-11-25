@@ -1,5 +1,6 @@
 // pages/item-edit/item-edit.ts
 // 编辑物品：复用 item-form；ID 与创建时间由仓储保持不变，仅更新 updatedAt。
+import { toastInfo, toastSuccess } from '../../utils/toast'
 import type { Category } from '../../models/category'
 import type { Item } from '../../models/item'
 import type { ItemDraft } from '../../services/item-service'
@@ -35,7 +36,7 @@ Page({
       }
       this.setData({ item, categories, notFound: false })
     } catch {
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      toastInfo('加载失败')
     }
   },
 
@@ -43,7 +44,7 @@ Page({
     const draft = e.detail.draft as ItemDraft
     try {
       await itemService.saveDraft(draft, this.data.categories)
-      wx.showToast({ title: '已保存', icon: 'success' })
+      toastSuccess('已保存')
       setTimeout(() => {
         // 返回详情页（详情页 onShow 会刷新）
         const pages = getCurrentPages()
@@ -54,7 +55,7 @@ Page({
         }
       }, 400)
     } catch (err) {
-      wx.showToast({ title: err instanceof Error ? err.message : '保存失败', icon: 'none' })
+      toastInfo(err instanceof Error ? err.message : '保存失败')
     }
   },
 })

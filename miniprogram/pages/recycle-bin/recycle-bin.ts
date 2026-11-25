@@ -1,5 +1,6 @@
 // pages/recycle-bin/recycle-bin.ts
 // 回收站：恢复与永久删除（永久删除须明确说明不可恢复并二次确认）。
+import { toastInfo, toastSuccess } from '../../utils/toast'
 import type { Item } from '../../models/item'
 import { itemService } from '../../services/item-service'
 import { fenToYuan } from '../../utils/money'
@@ -51,7 +52,7 @@ Page({
       })
     } catch {
       this.setData({ loading: false })
-      wx.showToast({ title: '加载失败', icon: 'none' })
+      toastInfo('加载失败')
     }
   },
 
@@ -66,10 +67,10 @@ Page({
         itemService
           .restore(id)
           .then(() => {
-            wx.showToast({ title: '已恢复', icon: 'success' })
+            toastSuccess('已恢复')
             this.refresh()
           })
-          .catch(() => wx.showToast({ title: '恢复失败', icon: 'none' }))
+          .catch(() => toastInfo('恢复失败'))
       },
     })
   },
@@ -89,17 +90,17 @@ Page({
         itemService
           .permanentDelete(id)
           .then(() => {
-            wx.showToast({ title: '已永久删除', icon: 'success' })
+            toastSuccess('已永久删除')
             this.refresh()
           })
-          .catch(() => wx.showToast({ title: '删除失败', icon: 'none' }))
+          .catch(() => toastInfo('删除失败'))
       },
     })
   },
 
   onRowTap(e: WechatMiniprogram.TouchEvent) {
     void e
-    wx.showToast({ title: '回收站物品不支持查看详情，请先恢复', icon: 'none' })
+    toastInfo('回收站物品不支持查看详情，请先恢复')
   },
 
   async onCoverError(e: WechatMiniprogram.CustomEvent) {

@@ -1,5 +1,6 @@
 // pages/backup/backup.ts
 // 本地 JSON 导出、导入预览与整库恢复；POC-05 文件交互仍待真机验证。
+import { toastInfo, toastSuccess, errorMessage } from '../../utils/toast'
 import {
   createShareBackup,
   readBackupContent,
@@ -8,14 +9,6 @@ import {
   hasPreRestoreSnapshot,
 } from '../../services/backup-service'
 import type { BackupSummary } from '../../services/backup-service'
-
-function errorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message
-  if (typeof error === 'object' && error !== null && 'errMsg' in error) {
-    return String((error as { errMsg?: unknown }).errMsg ?? '操作失败')
-  }
-  return String(error)
-}
 
 function isCancel(error: unknown): boolean {
   return errorMessage(error).toLowerCase().includes('cancel')
@@ -50,7 +43,7 @@ Page({
       this.setData({ exportReady: true })
     } catch {
       this.preparedBackupPath = ''
-      wx.showToast({ title: '备份文件生成失败', icon: 'none' })
+      toastInfo('备份文件生成失败')
     }
   },
 
@@ -66,7 +59,7 @@ Page({
   onExportTap() {
     if (this.data.exporting || this.data.importing || this.data.restoring) return
     if (!this.data.exportReady || !this.preparedBackupPath) {
-      wx.showToast({ title: '备份文件生成中，请稍候', icon: 'none' })
+      toastInfo('备份文件生成中，请稍候')
       return
     }
     this.setData({ exporting: true })
@@ -75,7 +68,7 @@ Page({
       fileName: `purchase-archive-${Date.now()}.json`,
       success: () => {
         this.setData({ exporting: false })
-        wx.showToast({ title: '备份文件已分享', icon: 'success' })
+        toastSuccess('备份文件已分享')
       },
       fail: (error: WechatMiniprogram.GeneralCallbackResult) => {
         this.setData({ exporting: false })
@@ -175,7 +168,7 @@ Page({
       })
       this.refreshProtectionState()
       this.prepareBackupFile()
-      wx.showToast({ title: '数据恢复完成', icon: 'success' })
+      toastSuccess('数据恢复完成')
     } catch (error) {
       this.setData({
         validationStatus: '恢复失败，本地原数据未被覆盖',
@@ -187,10 +180,7 @@ Page({
   },
 
   onUndoTap() {
-    wx.showToast({
-      title: this.data.hasPreRestore ? '撤销入口待接入，保护点已保留' : '暂无恢复保护点',
-      icon: 'none',
-    })
+    toastInfo(this.data.hasPreRestore ? '撤销入口待接入，保护点已保留' : '暂无恢复保护点')
   },
 
   onWebDavTap() {
