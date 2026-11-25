@@ -101,7 +101,20 @@ class WebDavClientImpl implements WebDavClient {
     return dir ? `${base}${dir}/${name}` : `${base}${name}`
   }
 
-  private request(
+  private async request(
+    method: 'HEAD' | 'GET' | 'PUT' | 'DELETE',
+    url: string,
+    data?: string,
+  ): Promise<RequestResult> {
+    try {
+      return await this.doRequest(method, url, data)
+    } catch {
+      // HTTP 状态码仍由 doRequest 正常返回，仅 wx.request 网络层 fail 会进入重试。
+      return this.doRequest(method, url, data)
+    }
+  }
+
+  private doRequest(
     method: 'HEAD' | 'GET' | 'PUT' | 'DELETE',
     url: string,
     data?: string,
