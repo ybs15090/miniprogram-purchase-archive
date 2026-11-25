@@ -1,6 +1,7 @@
 <view class="page-body recycle-page">
   <empty-state
     wx:if="{{!loading && rows.length === 0}}"
+    icon="🗑"
     text="回收站是空的"
     hint="删除的物品会在这里保留，可随时恢复"
   />

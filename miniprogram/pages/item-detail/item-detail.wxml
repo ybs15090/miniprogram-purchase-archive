@@ -1,5 +1,5 @@
 <view class="page-body detail-page">
-  <empty-state wx:if="{{notFound}}" text="物品不存在或已删除" hint="可能已被移入回收站" />
+  <empty-state wx:if="{{notFound}}" icon="🔍" text="物品不存在或已删除" hint="可能已被移入回收站" />
 
   <block wx:elif="{{item}}">
     <!-- 封面 -->

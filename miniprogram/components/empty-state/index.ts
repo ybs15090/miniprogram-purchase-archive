@@ -2,6 +2,10 @@
 // 空态组件：无数据 / 无搜索结果统一占位。
 Component({
   properties: {
+    icon: {
+      type: String,
+      value: '📦',
+    },
     text: {
       type: String,
       value: '暂无数据',

@@ -1,6 +1,7 @@
 <view class="page-body manage-page">
   <empty-state
     wx:if="{{!loading && rows.length === 0}}"
+    icon="🏷"
     text="还没有分类"
     hint="点击下方“新增分类”创建第一个分类"
   />

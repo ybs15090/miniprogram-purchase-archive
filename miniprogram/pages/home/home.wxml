@@ -36,9 +36,17 @@
     <view class="db-error-text">两份数据库副本均无法读取，已停止写入以保护数据。请通过"我的 → 数据备份"尝试恢复。</view>
   </view>
 
+  <!-- 首次加载 -->
+  <skeleton
+    wx:elif="{{loading && cards.length === 0}}"
+    type="{{layout === 'double' ? 'cards' : 'list'}}"
+    count="{{layout === 'double' ? 6 : 4}}"
+  />
+
   <!-- 空态 -->
   <empty-state
     wx:elif="{{!loading && cards.length === 0}}"
+    icon="{{keyword ? '🔍' : '📦'}}"
     text="{{keyword ? '没有找到匹配的物品' : '还没有物品记录'}}"
     hint="{{keyword ? '换个关键词试试' : '点击底部“新建”添加第一件物品'}}"
   />

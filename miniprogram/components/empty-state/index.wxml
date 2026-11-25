@@ -1,5 +1,5 @@
 <view class="empty-state">
-  <view class="empty-icon">📦</view>
+  <view class="empty-icon">{{icon}}</view>
   <view class="empty-text">{{text}}</view>
   <view wx:if="{{hint}}" class="empty-hint">{{hint}}</view>
 </view>

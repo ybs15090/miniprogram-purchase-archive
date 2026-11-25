@@ -59,7 +59,8 @@
     <!-- 命中物品 -->
     <view class="section">
       <view class="section-title">物品（{{cards.length}}）</view>
-      <empty-state wx:if="{{!loading && cards.length === 0}}" text="当前筛选没有命中物品" hint="调整分类或时间范围" />
+      <skeleton wx:if="{{loading}}" type="list" count="4" />
+      <empty-state wx:elif="{{cards.length === 0}}" icon="🔍" text="当前筛选没有命中物品" hint="调整分类或时间范围" />
       <view wx:else class="hit-list">
         <block wx:for="{{cards}}" wx:key="item.id">
           <item-card item="{{item.item}}" layout="single" categoryNames="{{item.categoryNames}}" />
