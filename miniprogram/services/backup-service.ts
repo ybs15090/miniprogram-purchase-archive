@@ -117,6 +117,9 @@ export function validateBackupContent(text: string): BackupValidationResult {
     if (item.coverImageUrl.trim() !== '' && !isHttpUrl(item.coverImageUrl.trim())) {
       errors.push(`物品 ${item.id} 封面 URL 格式不正确`)
     }
+    if (item.detailImageUrls.some((url) => !isHttpUrl(url.trim()))) {
+      errors.push(`物品 ${item.id} 详情图 URL 格式不正确`)
+    }
     if (new Set(item.categoryIds).size !== item.categoryIds.length) {
       errors.push(`物品 ${item.id} 存在重复分类关联`)
     }
