@@ -62,3 +62,25 @@
   flex-direction: column;
   gap: 20rpx;
 }
+
+.cloud-status {
+  margin-top: 32rpx;
+  padding: 24rpx 28rpx;
+  border-radius: 16rpx;
+  background: #F5F6F8;
+  color: #666666;
+  font-size: 26rpx;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.cloud-status--ok {
+  color: #2BA471;
+}
+
+.cloud-backup-info {
+  margin-top: 16rpx;
+  padding: 0 8rpx;
+  color: #181818;
+  font-size: 26rpx;
+}

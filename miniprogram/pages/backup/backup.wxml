@@ -38,6 +38,6 @@
 
   <view class="section-title">坚果云 WebDAV</view>
   <t-cell-group theme="card">
-    <t-cell title="WebDAV 配置" description="仅配置与凭据管理，传输待 POC-08 验证" arrow bindtap="onWebDavTap" />
+    <t-cell title="WebDAV 云端备份" description="测试连接、云端备份与恢复" arrow bindtap="onWebDavTap" />
   </t-cell-group>
 </view>

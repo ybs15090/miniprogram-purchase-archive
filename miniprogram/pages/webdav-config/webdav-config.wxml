@@ -1,8 +1,8 @@
 <view class="page-body webdav-page">
   <view class="card notice-card">
-    <view class="notice-title">仅配置，不传输</view>
-    <view class="notice-text">POC-08 端到端验证前，本页不会发起连接测试、上传、下载或恢复。</view>
-    <view class="notice-text">请在坚果云预先创建远程目录；应用不会枚举或创建目录。</view>
+    <view class="notice-title">云端备份</view>
+    <view class="notice-text">仅使用 HEAD/GET/PUT/DELETE；远程目录需在坚果云预先创建。</view>
+    <view class="notice-text">云端保留最近三份备份，上传后会回读并校验 SHA-256。</view>
   </view>
 
   <view class="section-title">服务器与账号</view>
@@ -25,6 +25,12 @@
 
   <view class="actions">
     <t-button theme="primary" size="large" block loading="{{saving}}" bind:tap="onSaveTap">保存配置</t-button>
-    <t-button theme="danger" variant="outline" size="large" block bind:tap="onClearTap">清除授权信息</t-button>
+    <t-button theme="default" variant="outline" size="large" block loading="{{testing}}" disabled="{{uploading || restoring}}" bind:tap="onTestConnectionTap">测试连接</t-button>
+    <t-button theme="default" variant="outline" size="large" block loading="{{uploading}}" disabled="{{testing || restoring}}" bind:tap="onUploadTap">上传云端备份</t-button>
+    <t-button theme="danger" variant="outline" size="large" block loading="{{restoring}}" disabled="{{testing || uploading}}" bind:tap="onRestoreTap">恢复最新云端备份</t-button>
+    <t-button theme="danger" variant="text" size="large" block bind:tap="onClearTap">清除授权信息</t-button>
   </view>
+
+  <view wx:if="{{cloudStatus}}" class="cloud-status {{cloudStatusOk ? 'cloud-status--ok' : ''}}">{{cloudStatus}}</view>
+  <view wx:if="{{lastBackupText}}" class="cloud-backup-info">{{lastBackupText}}</view>
 </view>

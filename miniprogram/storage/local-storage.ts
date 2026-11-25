@@ -30,6 +30,16 @@ export function readTextFile(filePath: string): Promise<string> {
   })
 }
 
+export function readBinaryFile(filePath: string): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    fs.readFile({
+      filePath,
+      success: (res) => resolve(res.data as ArrayBuffer),
+      fail: reject,
+    })
+  })
+}
+
 export function writeTextFile(filePath: string, data: string): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.writeFile({

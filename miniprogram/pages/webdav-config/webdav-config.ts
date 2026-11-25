@@ -1,6 +1,11 @@
 // pages/webdav-config/webdav-config.ts
-// WebDAV 配置与凭据管理；POC-08 前不发起连接、上传或下载。
+// WebDAV 配置、凭据管理、连接测试、云端备份与恢复。
 import type { WebDavConfig } from '../../services/webdav-client'
+import {
+  checkWebDavConnection,
+  uploadWebDavBackup,
+  restoreLatestWebDavBackup,
+} from '../../services/webdav-backup-service'
 import { getStorage, setStorage, removeStorage } from '../../storage/local-storage'
 import { STORAGE_KEYS } from '../../constants/storage-keys'
 
@@ -15,6 +20,12 @@ function normalizeRemoteDir(value: string): string {
   return value.trim().replace(/^\/+|\/+$/g, '')
 }
 
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+}
+
 Page({
   data: {
     serverUrl: DEFAULT_SERVER,
@@ -24,6 +35,12 @@ Page({
     remember: false,
     hasSavedCredentials: false,
     saving: false,
+    testing: false,
+    uploading: false,
+    restoring: false,
+    cloudStatus: '',
+    cloudStatusOk: false,
+    lastBackupText: '',
   },
 
   onLoad() {
@@ -74,29 +91,35 @@ Page({
     }
   },
 
-  onSaveTap() {
-    if (this.data.saving) return
+  buildConfig(): WebDavConfig | null {
     const serverUrl = this.data.serverUrl.trim()
     const remoteDir = normalizeRemoteDir(this.data.remoteDir)
     const username = this.data.username.trim()
     const appPassword = this.data.appPassword
     if (!validHttpsUrl(serverUrl)) {
       wx.showToast({ title: '服务器地址必须使用有效 HTTPS URL', icon: 'none' })
-      return
+      return null
     }
     if (!remoteDir || remoteDir.split('/').some((part) => !part || part === '.' || part === '..')) {
       wx.showToast({ title: '请填写有效的预建远程目录', icon: 'none' })
-      return
+      return null
     }
     if (!username || !appPassword) {
       wx.showToast({ title: '请填写账号和应用密码', icon: 'none' })
-      return
+      return null
     }
-    this.setData({ saving: true, serverUrl, remoteDir, username })
+    this.setData({ serverUrl, remoteDir, username })
+    return { serverUrl, remoteDir, username, appPassword }
+  },
+
+  onSaveTap() {
+    if (this.data.saving) return
+    const config = this.buildConfig()
+    if (!config) return
+    this.setData({ saving: true })
     try {
       setStorage(STORAGE_KEYS.webdavRemember, this.data.remember)
       if (this.data.remember) {
-        const config: WebDavConfig = { serverUrl, remoteDir, username, appPassword }
         setStorage(STORAGE_KEYS.webdavAuth, config)
       } else {
         removeStorage(STORAGE_KEYS.webdavAuth)
@@ -111,6 +134,89 @@ Page({
     } finally {
       this.setData({ saving: false })
     }
+  },
+
+  async onTestConnectionTap() {
+    if (this.isBusy()) return
+    const config = this.buildConfig()
+    if (!config) return
+    this.setData({ testing: true, cloudStatus: '正在测试连接…', cloudStatusOk: false })
+    try {
+      const result = await checkWebDavConnection(config)
+      this.setData({
+        cloudStatus: result.message,
+        cloudStatusOk: result.ok,
+      })
+    } catch (error) {
+      this.setData({
+        cloudStatus: error instanceof Error ? error.message : String(error),
+        cloudStatusOk: false,
+      })
+    } finally {
+      this.setData({ testing: false })
+    }
+  },
+
+  async onUploadTap() {
+    if (this.isBusy()) return
+    const config = this.buildConfig()
+    if (!config) return
+    this.setData({ uploading: true, cloudStatus: '正在上传云端备份…', cloudStatusOk: false })
+    try {
+      const result = await uploadWebDavBackup(config)
+      this.setData({
+        cloudStatus: `云端备份完成，SHA-256 校验一致，${formatBytes(result.size)}`,
+        cloudStatusOk: true,
+        lastBackupText: `有效 ${result.activeItems} 条 / 回收站 ${result.deletedItems} 条 / 分类 ${result.categories} 个`,
+      })
+      wx.showToast({ title: '云端备份完成', icon: 'success' })
+    } catch (error) {
+      this.setData({
+        cloudStatus: error instanceof Error ? error.message : String(error),
+        cloudStatusOk: false,
+      })
+    } finally {
+      this.setData({ uploading: false })
+    }
+  },
+
+  async onRestoreTap() {
+    if (this.isBusy()) return
+    const config = this.buildConfig()
+    if (!config) return
+    wx.showModal({
+      title: '恢复云端备份',
+      content: '将下载最新云端备份并整库覆盖当前本地数据，恢复前会自动创建本地保护点。',
+      confirmText: '恢复',
+      confirmColor: '#D54941',
+      success: (res) => {
+        if (res.confirm) this.doRestore(config)
+      },
+    })
+  },
+
+  async doRestore(config: WebDavConfig) {
+    this.setData({ restoring: true, cloudStatus: '正在下载并校验云端备份…', cloudStatusOk: false })
+    try {
+      const entry = await restoreLatestWebDavBackup(config)
+      this.setData({
+        cloudStatus: `已恢复云端备份：${entry.fileName}`,
+        cloudStatusOk: true,
+        lastBackupText: `有效 ${entry.activeItems} 条 / 回收站 ${entry.deletedItems} 条 / 分类 ${entry.categories} 个`,
+      })
+      wx.showToast({ title: '云端恢复完成', icon: 'success' })
+    } catch (error) {
+      this.setData({
+        cloudStatus: error instanceof Error ? error.message : String(error),
+        cloudStatusOk: false,
+      })
+    } finally {
+      this.setData({ restoring: false })
+    }
+  },
+
+  isBusy(): boolean {
+    return this.data.saving || this.data.testing || this.data.uploading || this.data.restoring
   },
 
   onClearTap() {
