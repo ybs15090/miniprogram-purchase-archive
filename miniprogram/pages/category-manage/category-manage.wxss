@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 26rpx 0;
-  border-bottom: 1rpx solid #F0F2F4;
+  border-bottom: 1rpx solid var(--color-border);
 }
 
 .row:last-child {
@@ -27,13 +27,13 @@
 .row-name {
   font-size: 30rpx;
   font-weight: 500;
-  color: #181818;
+  color: var(--color-text);
 }
 
 .row-count {
   margin-top: 6rpx;
   font-size: 24rpx;
-  color: #A6ABB3;
+  color: var(--color-text-3);
 }
 
 .row-ops {
@@ -46,15 +46,15 @@
 
 .op {
   font-size: 26rpx;
-  color: #266FE8;
+  color: var(--color-primary);
 }
 
 .op--move {
-  color: #666666;
+  color: var(--color-text-2);
 }
 
 .op--danger {
-  color: #D54941;
+  color: var(--color-danger);
 }
 
 .add-btn {
@@ -62,11 +62,11 @@
   text-align: center;
   padding: 24rpx 0;
   border-radius: 16rpx;
-  background: #FFFFFF;
-  color: #0052D9;
+  background: var(--color-card);
+  color: var(--color-primary);
   font-size: 30rpx;
   font-weight: 500;
-  box-shadow: 0 2rpx 12rpx rgba(24, 24, 24, 0.05);
+  box-shadow: 0 2rpx 12rpx var(--shadow-card);
   transition: transform 0.15s ease;
 }
 

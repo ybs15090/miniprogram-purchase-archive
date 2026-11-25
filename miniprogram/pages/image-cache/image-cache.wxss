@@ -18,7 +18,7 @@
   margin: 36rpx 4rpx 16rpx;
   font-size: 30rpx;
   font-weight: 600;
-  color: #181818;
+  color: var(--color-text);
 }
 
 .desc-card {
@@ -27,7 +27,7 @@
 
 .desc-line {
   font-size: 26rpx;
-  color: #666666;
+  color: var(--color-text-2);
   line-height: 1.8;
 }
 
@@ -36,11 +36,11 @@
   text-align: center;
   padding: 26rpx 0;
   border-radius: 16rpx;
-  background: #FFFFFF;
-  color: #D54941;
+  background: var(--color-card);
+  color: var(--color-danger);
   font-size: 30rpx;
   font-weight: 500;
-  box-shadow: 0 2rpx 12rpx rgba(24, 24, 24, 0.05);
+  box-shadow: 0 2rpx 12rpx var(--shadow-card);
   transition: transform 0.15s ease;
 }
 
@@ -49,5 +49,5 @@
 }
 
 .clear-btn--disabled {
-  color: #A6ABB3;
+  color: var(--color-text-3);
 }

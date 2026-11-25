@@ -25,7 +25,7 @@
   margin-bottom: 16rpx;
   font-size: 30rpx;
   font-weight: 600;
-  color: #181818;
+  color: var(--color-text);
 }
 
 .entry-group {
@@ -37,7 +37,7 @@
   margin-top: 48rpx;
   text-align: center;
   font-size: 24rpx;
-  color: #A6ABB3;
+  color: var(--color-text-3);
 }
 
 .db-error {
@@ -47,12 +47,12 @@
 .db-error-title {
   font-size: 34rpx;
   font-weight: 600;
-  color: #D54941;
+  color: var(--color-danger);
 }
 
 .db-error-text {
   margin-top: 12rpx;
   font-size: 28rpx;
-  color: #666666;
+  color: var(--color-text-2);
   line-height: 1.6;
 }

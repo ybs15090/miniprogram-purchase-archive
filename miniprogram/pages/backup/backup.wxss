@@ -11,14 +11,14 @@
 
 .notice-text,
 .notice-warning {
-  color: #666666;
+  color: var(--color-text-2);
   font-size: 26rpx;
   line-height: 1.7;
 }
 
 .notice-warning,
 .overwrite-warning {
-  color: #B76E00;
+  color: var(--color-warning);
 }
 
 .notice-warning {
@@ -39,24 +39,24 @@
 }
 
 .file-name {
-  color: #181818;
+  color: var(--color-text);
   font-size: 27rpx;
   word-break: break-all;
   margin-bottom: 12rpx;
 }
 
 .validation-status {
-  color: #666666;
+  color: var(--color-text-2);
   line-height: 1.6;
 }
 
 .validation-status--success {
-  color: #2BA471;
+  color: var(--color-success);
   margin-bottom: 20rpx;
 }
 
 .error-line {
-  color: #D54941;
+  color: var(--color-danger);
   font-size: 25rpx;
   line-height: 1.6;
   margin-top: 10rpx;
@@ -67,7 +67,7 @@
   display: flex;
   justify-content: space-between;
   padding: 14rpx 0;
-  border-top: 1rpx solid #EEF1F4;
+  border-top: 1rpx solid var(--color-fill);
 }
 
 .overwrite-warning {

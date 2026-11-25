@@ -2,8 +2,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: #FFFFFF;
-  border-top: 1rpx solid #EEF0F2;
+  /* 固定不透明背景，避免页面内容透过底栏造成视觉杂乱 */
+  background: var(--color-card, #FFFFFF);
+  border-top: 1rpx solid var(--color-border, #F0F2F4);
+  box-shadow: 0 -4rpx 24rpx rgba(24, 24, 24, 0.06);
+  padding: 8rpx 0 calc(8rpx + constant(safe-area-inset-bottom));
   padding: 8rpx 0 calc(8rpx + env(safe-area-inset-bottom));
   position: fixed;
   left: 0;
@@ -20,11 +23,11 @@
   justify-content: center;
   padding: 6rpx 0 10rpx;
   position: relative;
-  color: #666666;
+  color: var(--color-text-2, #666666);
 }
 
 .tab-item--active {
-  color: #0052D9;
+  color: var(--color-primary, #0052D9);
 }
 
 .tab-icon {
@@ -48,5 +51,5 @@
   width: 36rpx;
   height: 4rpx;
   border-radius: 2rpx;
-  background: #0052D9;
+  background: var(--color-primary, #0052D9);
 }

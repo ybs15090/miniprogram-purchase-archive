@@ -6,7 +6,7 @@
 
 .stat-label {
   font-size: 26rpx;
-  color: #666666;
+  color: var(--color-text-2);
   line-height: 1.4;
 }
 
@@ -14,7 +14,7 @@
   margin-top: 10rpx;
   font-size: 42rpx;
   font-weight: 600;
-  color: #0052D9;
+  color: var(--color-primary);
   line-height: 1.2;
   word-break: break-all;
 }
@@ -26,5 +26,5 @@
 .stat-hint {
   margin-top: 8rpx;
   font-size: 24rpx;
-  color: #A6ABB3;
+  color: var(--color-text-3);
 }

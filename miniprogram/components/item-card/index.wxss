@@ -1,21 +1,26 @@
+/* 单列与双列统一使用组件内卡片变量，避免依赖全局样式穿透 */
+.card-double,
+.card-single {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
 /* 双列卡片 */
 .card-double {
-  background: #FFFFFF;
-  border-radius: 20rpx;
   overflow: hidden;
-  box-shadow: 0 2rpx 12rpx rgba(24, 24, 24, 0.05);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .card-double:active {
   transform: scale(0.985);
-  box-shadow: 0 4rpx 20rpx rgba(0, 82, 217, 0.10);
+  box-shadow: 0 4rpx 20rpx var(--color-primary-soft);
 }
 
 .cover-wrap {
   width: 100%;
   height: 320rpx;
-  background: #EEF1F4;
+  background: var(--color-fill);
 }
 
 .cover {
@@ -29,7 +34,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #A6ABB3;
+  color: var(--color-text-3);
 }
 
 .cover-placeholder-icon {
@@ -48,7 +53,7 @@
 .title {
   font-size: 32rpx;
   font-weight: 500;
-  color: #181818;
+  color: var(--color-text);
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -61,7 +66,7 @@
   margin-top: 10rpx;
   font-size: 34rpx;
   font-weight: 600;
-  color: #0052D9;
+  color: var(--color-primary);
 }
 
 /* 单列卡片 */
@@ -82,7 +87,7 @@
   height: 180rpx;
   border-radius: 16rpx;
   overflow: hidden;
-  background: #EEF1F4;
+  background: var(--color-fill);
   flex-shrink: 0;
 }
 
@@ -96,7 +101,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #A6ABB3;
+  color: var(--color-text-3);
   font-size: 48rpx;
 }
 
@@ -123,13 +128,13 @@
 
 .meta-date {
   font-size: 26rpx;
-  color: #666666;
+  color: var(--color-text-2);
 }
 
 .meta-tag {
   font-size: 24rpx;
-  color: #266FE8;
-  background: rgba(38, 111, 232, 0.08);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
   border-radius: 8rpx;
   padding: 4rpx 12rpx;
   line-height: 1.4;
