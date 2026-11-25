@@ -14,7 +14,7 @@
   </view>
 
   <!-- 封面图片 -->
-  <view class="section-title">封面图片 <text class="required">*</text></view>
+  <view class="section-title">封面图片 <text class="optional">（可选）</text></view>
   <view class="card section">
     <view class="mode-row">
       <view
@@ -33,13 +33,13 @@
     <view wx:if="{{coverMode === 'raw'}}" class="mode-warning">raw.githubusercontent.com 当前网络环境实测不可用，仅作兼容选项，不建议选择</view>
     <t-input
       wx:if="{{coverMode !== 'custom'}}"
-      placeholder="图片路径，如 images/cover.jpg（将自动拼接前缀）"
+      placeholder="图片路径，如 images/cover.jpg（可选，留空则不显示封面）"
       value="{{coverPath}}"
       bind:change="onCoverPathChange"
     />
     <t-input
       wx:else
-      placeholder="完整 URL，如 https://…"
+      placeholder="完整 URL，如 https://…（可选）"
       value="{{coverFull}}"
       bind:change="onCoverFullChange"
     />

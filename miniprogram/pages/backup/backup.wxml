@@ -6,7 +6,7 @@
   </view>
 
   <view class="action-group">
-    <t-button theme="primary" size="large" block loading="{{exporting}}" disabled="{{importing || restoring}}" bind:tap="onExportTap">导出并分享 JSON</t-button>
+    <t-button theme="primary" size="large" block loading="{{exporting}}" disabled="{{!exportReady || importing || restoring}}" bind:tap="onExportTap">导出并分享 JSON</t-button>
     <t-button theme="default" variant="outline" size="large" block loading="{{importing}}" disabled="{{exporting || restoring}}" bind:tap="onImportTap">从微信会话选择 JSON</t-button>
   </view>
 

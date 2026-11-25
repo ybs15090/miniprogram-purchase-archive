@@ -51,8 +51,8 @@ Component({
     item(item: Item) {
       if (!item) return
       this.setData({
-        coverFailed: false,
-        coverSrc: getCachedPath(item.coverImageUrl),
+        coverFailed: !item.coverImageUrl,
+        coverSrc: item.coverImageUrl ? getCachedPath(item.coverImageUrl) : '',
         amountText: `¥${fenToYuan(item.paidAmount)}`,
         dateText: formatDate(item.purchaseDate),
         coverRequestedUrl: '',
@@ -63,7 +63,7 @@ Component({
   methods: {
     requestCover() {
       const item = this.data.item as Item | null
-      if (!item || this.data.coverRequestedUrl === item.coverImageUrl) return
+      if (!item || !item.coverImageUrl || this.data.coverRequestedUrl === item.coverImageUrl) return
       this.setData({ coverRequestedUrl: item.coverImageUrl })
       downloadAndRefresh(item.coverImageUrl, (path) => {
         const current = this.data.item as Item | null

@@ -10,7 +10,7 @@ import { readDatabase, saveDatabase, snapshotToPreRestore, CURRENT_SCHEMA_VERSIO
 import { getUserDataPath, joinPath, readTextFile, writeTextFile, mkdir, exists } from '../storage/local-storage'
 import { DATA_DIR, PRE_RESTORE } from '../constants/storage-keys'
 import { now } from '../utils/date'
-import { isNonNegativeInteger, isPositiveInteger } from '../utils/validation'
+import { isHttpUrl, isNonNegativeInteger, isPositiveInteger } from '../utils/validation'
 
 export interface BackupSummary {
   activeItems: number
@@ -114,8 +114,8 @@ export function validateBackupContent(text: string): BackupValidationResult {
     if (!item.title.trim()) {
       errors.push(`物品 ${item.id} 标题为空`)
     }
-    if (!item.coverImageUrl.trim()) {
-      errors.push(`物品 ${item.id} 封面 URL 为空`)
+    if (item.coverImageUrl.trim() !== '' && !isHttpUrl(item.coverImageUrl.trim())) {
+      errors.push(`物品 ${item.id} 封面 URL 格式不正确`)
     }
     if (new Set(item.categoryIds).size !== item.categoryIds.length) {
       errors.push(`物品 ${item.id} 存在重复分类关联`)
@@ -165,6 +165,16 @@ export async function createLocalBackup(): Promise<string> {
   await writeTextFile(path, text)
   return path
 }
+
+/** 生成用于分享的唯一备份文件；不得复用旧路径，避免微信会话引用的文件被覆盖 */
+export async function createShareBackup(): Promise<string> {
+  const text = await exportJson()
+  const path = joinPath(getUserDataPath(), DATA_DIR, `local-backup-share-${Date.now()}.json`)
+  await mkdir(joinPath(getUserDataPath(), DATA_DIR))
+  await writeTextFile(path, text)
+  return path
+}
+
 
 /**
  * 整库恢复（覆盖语义）：

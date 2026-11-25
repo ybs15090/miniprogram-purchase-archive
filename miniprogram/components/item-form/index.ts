@@ -249,8 +249,8 @@ Component({
     // ---- 提交 ----
     onSubmit() {
       const coverUrl = this.data.coverPreview
-      if (!coverUrl) {
-        wx.showToast({ title: '请填写封面图片', icon: 'none' })
+      if (coverUrl && !isHttpUrl(coverUrl)) {
+        wx.showToast({ title: '封面图片 URL 格式不正确', icon: 'none' })
         return
       }
       const detailUrls: string[] = []

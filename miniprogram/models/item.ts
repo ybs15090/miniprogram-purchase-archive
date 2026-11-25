@@ -5,7 +5,7 @@ export interface Item {
   id: string
   /** 物品标题 */
   title: string
-  /** 首页封面图片 URL（必填） */
+  /** 首页封面图片 URL（可选，空字符串表示无封面） */
   coverImageUrl: string
   /** 详情图片 URL 数组，顺序代表展示顺序 */
   detailImageUrls: string[]

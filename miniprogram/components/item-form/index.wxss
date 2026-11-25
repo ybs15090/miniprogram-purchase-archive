@@ -14,6 +14,13 @@
   color: #D54941;
 }
 
+.optional {
+  margin-left: 8rpx;
+  font-size: 24rpx;
+  font-weight: 400;
+  color: #A6ABB3;
+}
+
 .section {
   padding: 8rpx 24rpx 24rpx;
 }

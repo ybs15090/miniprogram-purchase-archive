@@ -35,8 +35,8 @@ Page({
           item,
           amountText: `¥${fenToYuan(item.paidAmount)}`,
           deletedDateText: item.deletedAt !== null ? formatDate(item.deletedAt) : '',
-          coverSrc: getCachedPath(item.coverImageUrl),
-          coverFailed: false,
+          coverSrc: item.coverImageUrl ? getCachedPath(item.coverImageUrl) : '',
+          coverFailed: !item.coverImageUrl,
         }))
       this.setData({ rows, loading: false })
       // 后台按需下载封面，完成后刷新对应行

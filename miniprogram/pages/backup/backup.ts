@@ -1,7 +1,7 @@
 // pages/backup/backup.ts
 // 本地 JSON 导出、导入预览与整库恢复；POC-05 文件交互仍待真机验证。
 import {
-  createLocalBackup,
+  createShareBackup,
   readBackupContent,
   validateBackupContent,
   restoreFromContent,
@@ -26,6 +26,7 @@ Page({
     exporting: false,
     importing: false,
     restoring: false,
+    exportReady: false,
     selectedFileName: '',
     validationStatus: '尚未选择导入文件',
     validationErrors: [] as string[],
@@ -34,9 +35,23 @@ Page({
   },
 
   pendingContent: '',
+  preparedBackupPath: '',
 
   onShow() {
     this.refreshProtectionState()
+    this.prepareBackupFile()
+  },
+
+  async prepareBackupFile() {
+    this.setData({ exportReady: false })
+    try {
+      const path = await createShareBackup()
+      this.preparedBackupPath = path
+      this.setData({ exportReady: true })
+    } catch {
+      this.preparedBackupPath = ''
+      wx.showToast({ title: '备份文件生成失败', icon: 'none' })
+    }
   },
 
   async refreshProtectionState() {
@@ -48,27 +63,27 @@ Page({
     }
   },
 
-  async onExportTap() {
+  onExportTap() {
     if (this.data.exporting || this.data.importing || this.data.restoring) return
-    this.setData({ exporting: true })
-    try {
-      const filePath = await createLocalBackup()
-      await new Promise<void>((resolve, reject) => {
-        wx.shareFileMessage({
-          filePath,
-          fileName: `purchase-archive-${Date.now()}.json`,
-          success: () => resolve(),
-          fail: reject,
-        })
-      })
-      wx.showToast({ title: '备份文件已分享', icon: 'success' })
-    } catch (error) {
-      if (!isCancel(error)) {
-        wx.showModal({ title: '导出失败', content: errorMessage(error), showCancel: false })
-      }
-    } finally {
-      this.setData({ exporting: false })
+    if (!this.data.exportReady || !this.preparedBackupPath) {
+      wx.showToast({ title: '备份文件生成中，请稍候', icon: 'none' })
+      return
     }
+    this.setData({ exporting: true })
+    wx.shareFileMessage({
+      filePath: this.preparedBackupPath,
+      fileName: `purchase-archive-${Date.now()}.json`,
+      success: () => {
+        this.setData({ exporting: false })
+        wx.showToast({ title: '备份文件已分享', icon: 'success' })
+      },
+      fail: (error: WechatMiniprogram.GeneralCallbackResult) => {
+        this.setData({ exporting: false })
+        if (!isCancel(error)) {
+          wx.showModal({ title: '导出失败', content: errorMessage(error), showCancel: false })
+        }
+      },
+    })
   },
 
   async onImportTap() {
@@ -159,6 +174,7 @@ Page({
         validationStatus: '恢复完成，已保留恢复前保护点',
       })
       this.refreshProtectionState()
+      this.prepareBackupFile()
       wx.showToast({ title: '数据恢复完成', icon: 'success' })
     } catch (error) {
       this.setData({

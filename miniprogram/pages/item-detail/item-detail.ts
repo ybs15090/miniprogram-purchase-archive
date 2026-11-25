@@ -51,7 +51,7 @@ Page({
         return
       }
       const nameMap = new Map(categories.map((c) => [c.id, c.name]))
-      const coverSrc = getCachedPath(item.coverImageUrl)
+      const coverSrc = item.coverImageUrl ? getCachedPath(item.coverImageUrl) : ''
       const detailImageSrcs = item.detailImageUrls.map((u) => getCachedPath(u))
       this.detailObserver?.disconnect()
       this.detailObserver = null
@@ -59,7 +59,7 @@ Page({
       this.setData({
         item,
         notFound: false,
-        coverFailed: false,
+        coverFailed: !item.coverImageUrl,
         coverSrc,
         detailImageSrcs,
         detailImageFailed: item.detailImageUrls.map(() => false),
@@ -74,11 +74,13 @@ Page({
       })
       wx.setNavigationBarTitle({ title: item.title })
       // 封面优先；详情图进入可视区域或邻近区域后才请求下载
-      downloadAndRefresh(item.coverImageUrl, (path) => {
-        if (this.data.item && this.data.item.coverImageUrl === item.coverImageUrl) {
-          this.setData({ coverSrc: path, coverFailed: false })
-        }
-      })
+      if (item.coverImageUrl) {
+        downloadAndRefresh(item.coverImageUrl, (path) => {
+          if (this.data.item && this.data.item.coverImageUrl === item.coverImageUrl) {
+            this.setData({ coverSrc: path, coverFailed: false })
+          }
+        })
+      }
       wx.nextTick(() => this.observeDetailImages())
     } catch {
       wx.showToast({ title: '加载失败', icon: 'none' })

@@ -97,7 +97,8 @@ export function queryItems(items: Item[], query: ItemQuery): Item[] {
 export function validateItemDraft(draft: ItemDraft, existingCategories: Category[]): ValidationResult {
   const errors: string[] = []
   if (!draft.title.trim()) errors.push('标题不能为空')
-  if (!isHttpUrl(draft.coverImageUrl.trim())) errors.push('封面图片 URL 格式不正确')
+  const coverImageUrl = draft.coverImageUrl.trim()
+  if (coverImageUrl !== '' && !isHttpUrl(coverImageUrl)) errors.push('封面图片 URL 格式不正确')
   if (!isNonNegativeInteger(draft.paidAmount)) errors.push('实际支付总金额必须是有效的整数分')
   if (!isPositiveInteger(draft.quantity)) errors.push('购买数量必须是大于 0 的整数')
   if (!Number.isFinite(draft.purchaseDate)) errors.push('购买时间无效')
