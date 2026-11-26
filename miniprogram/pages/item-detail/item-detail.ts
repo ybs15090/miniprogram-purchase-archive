@@ -5,7 +5,7 @@ import type { Item } from '../../models/item'
 import { itemService } from '../../services/item-service'
 import { categoryService } from '../../services/category-service'
 import { fenToYuan } from '../../utils/money'
-import { formatDate, formatDateTime } from '../../utils/date'
+import { formatDate, formatDateTime, formatHoldingDuration } from '../../utils/date'
 import { ROUTES } from '../../constants/routes'
 import { getCachedPath, downloadAndRefresh, discardCached } from '../../services/image-cache-service'
 
@@ -16,6 +16,7 @@ Page({
     amountText: '',
     averageText: '',
     dateText: '',
+    holdingText: '',
     createdAtText: '',
     updatedAtText: '',
     coverFailed: false,
@@ -70,6 +71,7 @@ Page({
         amountText: `¥${fenToYuan(item.paidAmount)}`,
         averageText: item.quantity > 0 ? `¥${fenToYuan(Math.round(item.paidAmount / item.quantity))}` : '--',
         dateText: formatDate(item.purchaseDate),
+        holdingText: formatHoldingDuration(item.purchaseDate),
         createdAtText: formatDateTime(item.createdAt),
         updatedAtText: formatDateTime(item.updatedAt),
       })

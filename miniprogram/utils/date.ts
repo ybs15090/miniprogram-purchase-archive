@@ -21,3 +21,27 @@ export function formatDateTime(ts: number): string {
 export function now(): number {
   return Date.now()
 }
+
+/** 格式化持有时长，xx年xx天；fromTs 为购买时间，toTs 默认当前时间 */
+export function formatHoldingDuration(fromTs: number, toTs: number = Date.now()): string {
+  const start = new Date(fromTs)
+  const end = new Date(toTs)
+
+  // 购买时间无效或晚于当前时间时做下限保护，避免出现负值
+  if (Number.isNaN(start.getTime()) || end.getTime() <= start.getTime()) {
+    return '0年0天'
+  }
+
+  let years = end.getFullYear() - start.getFullYear()
+
+  // end 年份中与 start 同月同日的周年日期
+  let anniversary = new Date(end.getFullYear(), start.getMonth(), start.getDate())
+  if (anniversary.getTime() > end.getTime()) {
+    years -= 1
+    anniversary = new Date(end.getFullYear() - 1, start.getMonth(), start.getDate())
+  }
+
+  const days = Math.floor((end.getTime() - anniversary.getTime()) / 86400000)
+
+  return `${Math.max(0, years)}年${Math.max(0, days)}天`
+}

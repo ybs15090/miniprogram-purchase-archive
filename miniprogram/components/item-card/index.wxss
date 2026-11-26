@@ -62,11 +62,24 @@
   -webkit-box-orient: vertical;
 }
 
-.amount {
+.amount-row {
   margin-top: 10rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.amount {
   font-size: 34rpx;
   font-weight: 600;
   color: var(--color-primary);
+}
+
+.holding {
+  font-size: 24rpx;
+  color: var(--color-text-2);
 }
 
 /* 单列卡片 */

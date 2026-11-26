@@ -16,7 +16,10 @@
   </view>
   <view class="double-body">
     <view class="title">{{item.title}}</view>
-    <view class="amount">{{amountText}}</view>
+    <view class="amount-row">
+      <text class="amount">{{amountText}}</text>
+      <text class="holding">{{holdingText}}</text>
+    </view>
   </view>
 </view>
 
@@ -37,7 +40,10 @@
   </view>
   <view class="single-body">
     <view class="title">{{item.title}}</view>
-    <view class="amount">{{amountText}}</view>
+    <view class="amount-row">
+      <text class="amount">{{amountText}}</text>
+      <text class="holding">{{holdingText}}</text>
+    </view>
     <view class="meta">
       <text wx:if="{{dateText}}" class="meta-date">{{dateText}}</text>
       <text wx:for="{{categoryNames}}" wx:key="*this" class="meta-tag">{{item}}</text>

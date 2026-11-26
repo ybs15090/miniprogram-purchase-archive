@@ -3,7 +3,7 @@
 // 图片加载失败显示占位，不中断列表。封面优先读本地缓存。
 import type { Item } from '../../models/item'
 import { fenToYuan } from '../../utils/money'
-import { formatDate } from '../../utils/date'
+import { formatDate, formatHoldingDuration } from '../../utils/date'
 import { getCachedPath, downloadAndRefresh, discardCached } from '../../services/image-cache-service'
 
 const coverObservers = new WeakMap<object, WechatMiniprogram.IntersectionObserver>()
@@ -29,6 +29,7 @@ Component({
     coverSrc: '',
     amountText: '',
     dateText: '',
+    holdingText: '',
     coverVisible: false,
     coverRequestedUrl: '',
   },
@@ -55,6 +56,7 @@ Component({
         coverSrc: item.coverImageUrl ? getCachedPath(item.coverImageUrl) : '',
         amountText: `¥${fenToYuan(item.paidAmount)}`,
         dateText: formatDate(item.purchaseDate),
+        holdingText: formatHoldingDuration(item.purchaseDate),
         coverRequestedUrl: '',
       })
       if (this.data.coverVisible) this.requestCover()

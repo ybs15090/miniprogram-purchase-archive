@@ -40,11 +40,24 @@
   line-height: 1.4;
 }
 
-.detail-amount {
+.detail-amount-row {
   margin-top: 14rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.detail-amount {
   font-size: 44rpx;
   font-weight: 700;
   color: var(--color-primary);
+}
+
+.detail-holding {
+  font-size: 26rpx;
+  color: var(--color-text-2);
 }
 
 .amount-meta {
