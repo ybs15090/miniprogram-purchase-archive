@@ -21,8 +21,8 @@
     <view class="card base-card">
       <view class="detail-title">{{item.title}}</view>
       <view class="detail-amount-row">
-        <text class="detail-amount">{{amountText}}</text>
         <text class="detail-holding">{{holdingText}}</text>
+        <text class="detail-amount">{{amountText}}</text>
       </view>
       <view class="amount-meta">
         <text>数量 ×{{item.quantity}}</text>

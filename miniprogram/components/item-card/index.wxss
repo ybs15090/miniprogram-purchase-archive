@@ -68,18 +68,19 @@
   flex-direction: row;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 12rpx;
+  gap: 32rpx;
 }
 
 .amount {
-  font-size: 34rpx;
-  font-weight: 600;
-  color: var(--color-primary);
+  font-size: 26rpx;
+  font-weight: 400;
+  color: var(--color-text-2);
 }
 
 .holding {
-  font-size: 24rpx;
-  color: var(--color-text-2);
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
 /* 单列卡片 */
@@ -127,7 +128,7 @@
   justify-content: space-between;
 }
 
-.single-body .amount {
+.single-body .holding {
   font-size: 36rpx;
 }
 

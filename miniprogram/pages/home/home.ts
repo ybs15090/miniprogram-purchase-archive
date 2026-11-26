@@ -20,10 +20,9 @@ interface SortOption {
 }
 
 const SORT_OPTIONS: SortOption[] = [
-  { key: 'purchaseDate', label: '最近购买' },
+  { key: 'purchaseDateAsc', label: '持有最久' },
+  { key: 'purchaseDate', label: '最近购入' },
   { key: 'createdAt', label: '最近添加' },
-  { key: 'amountDesc', label: '金额从高到低' },
-  { key: 'amountAsc', label: '金额从低到高' },
   { key: 'title', label: '标题名称' },
 ]
 
@@ -31,9 +30,9 @@ Page({
   data: {
     layout: 'double' as 'double' | 'single',
     keyword: '',
-    sortKey: 'purchaseDate' as SortKey,
+    sortKey: 'purchaseDateAsc' as SortKey,
     sortOptions: SORT_OPTIONS,
-    sortLabel: '最近购买',
+    sortLabel: '持有最久',
     cards: [] as ItemCard[],
     totalCount: 0,
     loading: true,
@@ -48,8 +47,8 @@ Page({
     const validSort = SORT_OPTIONS.find((o) => o.key === savedSort)
     this.setData({
       layout: savedLayout === 'single' ? 'single' : 'double',
-      sortKey: validSort ? validSort.key : 'purchaseDate',
-      sortLabel: validSort ? validSort.label : '最近购买',
+      sortKey: validSort ? validSort.key : 'purchaseDateAsc',
+      sortLabel: validSort ? validSort.label : '持有最久',
     })
   },
 

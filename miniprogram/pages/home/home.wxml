@@ -47,8 +47,8 @@
   <empty-state
     wx:elif="{{!loading && cards.length === 0}}"
     icon="{{keyword ? '🔍' : '📦'}}"
-    text="{{keyword ? '没有找到匹配的物品' : '还没有物品记录'}}"
-    hint="{{keyword ? '换个关键词试试' : '点击底部“新建”添加第一件物品'}}"
+    text="{{keyword ? '没有找到匹配的物品' : '还没有收录物品'}}"
+    hint="{{keyword ? '换个关键词试试' : '点击“新建”收录你的第一件物品'}}"
   />
 
   <!-- 物品列表 -->

@@ -7,7 +7,7 @@ import type { Category } from '../models/category'
 import { itemRepository } from '../repositories/item-repository'
 import { isHttpUrl, isNonNegativeInteger, isPositiveInteger } from '../utils/validation'
 
-export type SortKey = 'purchaseDate' | 'createdAt' | 'amountDesc' | 'amountAsc' | 'title'
+export type SortKey = 'purchaseDate' | 'purchaseDateAsc' | 'createdAt' | 'amountDesc' | 'amountAsc' | 'title'
 
 export interface ItemQuery {
   /** 标题关键词，大小写不敏感的部分匹配 */
@@ -69,6 +69,8 @@ export function sortItems(items: Item[], sortBy: SortKey): Item[] {
   switch (sortBy) {
     case 'purchaseDate':
       return list.sort((a, b) => b.purchaseDate - a.purchaseDate)
+    case 'purchaseDateAsc':
+      return list.sort((a, b) => a.purchaseDate - b.purchaseDate)
     case 'createdAt':
       return list.sort((a, b) => b.createdAt - a.createdAt)
     case 'amountDesc':
