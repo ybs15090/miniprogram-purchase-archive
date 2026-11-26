@@ -156,6 +156,14 @@ Page({
     this.setData({ detailImageFailed: failed })
   },
 
+  /** 封面图预览：点击查看大图 */
+  onCoverTap() {
+    const item = this.data.item
+    if (!item?.coverImageUrl || this.data.coverFailed) return
+    const src = this.data.coverSrc || item.coverImageUrl
+    wx.previewImage({ current: src, urls: [src] })
+  },
+
   /** 详情图预览：左右浏览全部详情图（使用缓存路径，未命中回退原 URL） */
   onDetailImageTap(e: WechatMiniprogram.TouchEvent) {
     const item = this.data.item

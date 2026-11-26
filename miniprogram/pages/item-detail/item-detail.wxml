@@ -9,6 +9,7 @@
         class="cover"
         src="{{coverSrc}}"
         mode="aspectFill"
+        bindtap="onCoverTap"
         binderror="onCoverError"
       />
       <view wx:else class="cover cover--placeholder">
