@@ -6,3 +6,4 @@ node_modules/
 .DS_Store
 project.private.config.json
 miniprogram/miniprogram_npm/**/.wechatide.ib.json
+docs/backup-*.json

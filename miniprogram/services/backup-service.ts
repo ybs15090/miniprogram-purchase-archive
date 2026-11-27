@@ -3,11 +3,11 @@
 // POC-05（wx.shareFileMessage / wx.chooseMessageFile 的分享与选择）尚未真机验证；
 // 阶段 6 页面已接入入口，但在真机验收前不得承诺文件交互完全可用。
 
-import type { BackupFile } from '../models/backup'
+import type { BackupFile, RuntimeDatabase } from '../models/backup'
 import type { Item } from '../models/item'
 import type { Category } from '../models/category'
-import { readDatabase, saveDatabase, snapshotToPreRestore, CURRENT_SCHEMA_VERSION, isItemShape, isCategoryShape } from '../storage/database-storage'
-import { getUserDataPath, joinPath, readTextFile, writeTextFile, mkdir, exists, readdir, removeFile } from '../storage/local-storage'
+import { readDatabase, saveDatabase, snapshotToPreRestore, CURRENT_SCHEMA_VERSION, isItemShape, isCategoryShape, isDatabaseShape } from '../storage/database-storage'
+import { getUserDataPath, joinPath, readTextFile, writeTextFile, mkdir, exists, readdir, removeFile, stat } from '../storage/local-storage'
 import { DATA_DIR, PRE_RESTORE } from '../constants/storage-keys'
 import { now } from '../utils/date'
 import { isHttpUrl, isNonNegativeInteger, isPositiveInteger } from '../utils/validation'
@@ -255,7 +255,7 @@ export async function createShareBackup(): Promise<string> {
 /**
  * 整库恢复（覆盖语义）：
  * 先严格校验 → pre-restore 保护点 → 写入新库。
- * 恢复失败时原库保留。阶段 6 已生成保护点；"撤销本次恢复"入口仍按实施计划保留占位。
+ * 恢复失败时原库保留；保护点可由"撤销上次恢复"入口写回。
  */
 export async function restoreFromContent(text: string): Promise<BackupValidationResult> {
   const result = validateBackupContent(text)
@@ -275,11 +275,134 @@ export async function restoreFromContent(text: string): Promise<BackupValidation
   return { valid: true, errors: [] }
 }
 
-/** 恢复保护点文件路径（用于后续"撤销本次恢复"能力） */
+/** 恢复保护点文件路径（供"撤销上次恢复"读写） */
 export function preRestorePath(): string {
   return joinPath(getUserDataPath(), DATA_DIR, PRE_RESTORE)
 }
 
 export function hasPreRestoreSnapshot(): Promise<boolean> {
   return exists(preRestorePath())
+}
+
+/** 恢复保护点（pre-restore.json）的可展示信息 */
+export interface PreRestoreInfo {
+  exists: boolean
+  /** 文件可解析且校验通过时的数据概要 */
+  summary?: BackupSummary
+  /** 保护点保存时间（毫秒）；无法取得时为 undefined */
+  savedAt?: number
+  /** 文件存在但不可用时的原因 */
+  error?: string
+}
+
+/** 撤销结果：数据回退与保护点清理分别报告 */
+export interface UndoRestoreResult {
+  summary: BackupSummary
+  protectionRemoved: boolean
+}
+
+interface LoadedPreRestore {
+  db: RuntimeDatabase
+  savedAt?: number
+}
+
+function summarizeDatabase(db: RuntimeDatabase): BackupSummary {
+  return {
+    activeItems: db.items.filter((it) => it.deletedAt === null).length,
+    deletedItems: db.items.filter((it) => it.deletedAt !== null).length,
+    categories: db.categories.length,
+  }
+}
+
+/**
+ * 用现有备份校验规则复核保护点内容：
+ * 把 RuntimeDatabase 包装成同构的 BackupFile 交给 validateBackupContent，
+ * 复用 ID 唯一性、分类引用、金额/数量等业务规则，避免两套规则漂移。
+ */
+function validatePreRestoreContent(db: RuntimeDatabase): string[] {
+  const synthetic: BackupFile = {
+    format: BACKUP_FORMAT,
+    schemaVersion: db.schemaVersion,
+    appVersion: APP_VERSION,
+    exportedAt: db.updatedAt,
+    sourceRevision: db.revision,
+    summary: summarizeDatabase(db),
+    data: {
+      items: db.items,
+      categories: db.categories,
+    },
+  }
+  return validateBackupContent(JSON.stringify(synthetic)).errors
+}
+
+/**
+ * 读取并校验保护点：文件不存在返回 null，内容不可用抛错。
+ * 全部校验必须在 saveDatabase 之前完成。
+ */
+async function readPreRestoreDatabase(): Promise<LoadedPreRestore | null> {
+  const path = preRestorePath()
+  if (!(await exists(path))) return null
+  let text: string
+  try {
+    text = await readTextFile(path)
+  } catch (error) {
+    throw new Error(`保护点读取失败：${error instanceof Error ? error.message : String(error)}`)
+  }
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(text)
+  } catch {
+    throw new Error('保护点文件已损坏，无法撤销')
+  }
+  if (!isDatabaseShape(parsed)) {
+    throw new Error('保护点结构不合法，无法撤销')
+  }
+  if (parsed.schemaVersion !== CURRENT_SCHEMA_VERSION) {
+    throw new Error(`保护点版本不受支持：${parsed.schemaVersion}`)
+  }
+  const errors = validatePreRestoreContent(parsed)
+  if (errors.length > 0) {
+    throw new Error(`保护点内容校验失败：${errors[0]}`)
+  }
+  let savedAt: number | undefined
+  try {
+    // lastModifiedTime 单位为秒
+    const ms = (await stat(path)).lastModifiedTime * 1000
+    if (ms > 0) savedAt = ms
+  } catch {
+    // 取不到时间只影响展示，不影响撤销
+  }
+  return { db: parsed, savedAt }
+}
+
+/** 读取保护点摘要供页面展示；任何错误都转为 error 字段，不抛异常 */
+export async function getPreRestoreInfo(): Promise<PreRestoreInfo> {
+  try {
+    const loaded = await readPreRestoreDatabase()
+    if (loaded === null) return { exists: false }
+    return { exists: true, summary: summarizeDatabase(loaded.db), savedAt: loaded.savedAt }
+  } catch (error) {
+    return { exists: true, error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+/**
+ * 撤销上一次恢复：把保护点写回为当前库，成功后删除保护点。
+ * 保存失败时保护点保留、数据库保持原状；删除失败不影响撤销结果。
+ */
+export async function undoLastRestore(): Promise<UndoRestoreResult> {
+  const loaded = await readPreRestoreDatabase()
+  if (loaded === null) throw new Error('暂无可撤销的恢复保护点')
+  const summary = summarizeDatabase(loaded.db)
+  await saveDatabase({
+    format: 'purchase-archive-database',
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    revision: 0,
+    updatedAt: now(),
+    items: loaded.db.items,
+    categories: loaded.db.categories,
+  })
+  // 数据已回退，删除失败不能再抛错，否则页面会误报撤销失败
+  const protectionRemoved = await removeFile(preRestorePath()).then(() => true).catch(() => false)
+  return { summary, protectionRemoved }
 }

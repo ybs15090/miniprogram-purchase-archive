@@ -6,9 +6,11 @@ import {
   readBackupContent,
   validateBackupContent,
   restoreFromContent,
-  hasPreRestoreSnapshot,
+  getPreRestoreInfo,
+  undoLastRestore,
 } from '../../services/backup-service'
 import type { BackupSummary } from '../../services/backup-service'
+import { formatDateTime } from '../../utils/date'
 
 function isCancel(error: unknown): boolean {
   return errorMessage(error).toLowerCase().includes('cancel')
@@ -19,16 +21,24 @@ Page({
     exporting: false,
     importing: false,
     restoring: false,
+    undoing: false,
     exportReady: false,
     selectedFileName: '',
     validationStatus: '尚未选择导入文件',
     validationErrors: [] as string[],
     summary: null as BackupSummary | null,
     hasPreRestore: false,
+    protectionState: 'none' as 'none' | 'ready' | 'error',
+    protectionDescription: '首次恢复前自动创建保护点',
+    protectionNote: '',
   },
 
   pendingContent: '',
   preparedBackupPath: '',
+  preRestoreSummary: null as BackupSummary | null,
+  preRestoreTimeText: '',
+  /** 确认弹窗打开期间锁定，防止快速双击弹出多个弹窗 */
+  undoConfirming: false,
 
   onShow() {
     this.refreshProtectionState()
@@ -49,15 +59,51 @@ Page({
 
   async refreshProtectionState() {
     try {
-      const hasPreRestore = await hasPreRestoreSnapshot()
-      this.setData({ hasPreRestore })
+      const info = await getPreRestoreInfo()
+      if (!info.exists) {
+        this.preRestoreSummary = null
+        this.preRestoreTimeText = ''
+        this.setData({
+          hasPreRestore: false,
+          protectionState: 'none',
+          protectionDescription: '首次恢复前自动创建保护点',
+          protectionNote: '',
+        })
+        return
+      }
+      if (info.error || !info.summary) {
+        this.preRestoreSummary = null
+        this.preRestoreTimeText = ''
+        this.setData({
+          hasPreRestore: true,
+          protectionState: 'error',
+          protectionDescription: info.error ?? '保护点内容不可用',
+          protectionNote: '不可撤销',
+        })
+        return
+      }
+      this.preRestoreSummary = info.summary
+      this.preRestoreTimeText = info.savedAt ? formatDateTime(info.savedAt) : '保存时间未知'
+      this.setData({
+        hasPreRestore: true,
+        protectionState: 'ready',
+        protectionDescription: `有效物品 ${info.summary.activeItems} 条 · 回收站 ${info.summary.deletedItems} 条 · 分类 ${info.summary.categories} 个`,
+        protectionNote: this.preRestoreTimeText,
+      })
     } catch {
-      this.setData({ hasPreRestore: false })
+      this.preRestoreSummary = null
+      this.preRestoreTimeText = ''
+      this.setData({
+        hasPreRestore: false,
+        protectionState: 'none',
+        protectionDescription: '保护点读取失败',
+        protectionNote: '',
+      })
     }
   },
 
   onExportTap() {
-    if (this.data.exporting || this.data.importing || this.data.restoring) return
+    if (this.data.exporting || this.data.importing || this.data.restoring || this.data.undoing) return
     if (!this.data.exportReady || !this.preparedBackupPath) {
       toastInfo('备份文件生成中，请稍候')
       return
@@ -80,7 +126,7 @@ Page({
   },
 
   async onImportTap() {
-    if (this.data.exporting || this.data.importing || this.data.restoring) return
+    if (this.data.exporting || this.data.importing || this.data.restoring || this.data.undoing) return
     this.setData({ importing: true })
     try {
       const res = await new Promise<WechatMiniprogram.ChooseMessageFileSuccessCallbackResult>((resolve, reject) => {
@@ -136,11 +182,12 @@ Page({
   },
 
   onRestoreTap() {
-    if (!this.pendingContent || !this.data.summary || this.data.restoring) return
+    if (!this.pendingContent || !this.data.summary || this.data.restoring || this.data.undoing) return
     const summary = this.data.summary
+    const preRestoreHint = this.data.hasPreRestore ? '现有保护点将被本次恢复前的数据替换。' : ''
     wx.showModal({
       title: '确认整库恢复',
-      content: `将覆盖当前全部物品和分类。导入有效物品 ${summary.activeItems} 条、回收站 ${summary.deletedItems} 条、分类 ${summary.categories} 个。恢复前会自动保存当前数据库保护点。`,
+      content: `将覆盖当前全部物品和分类。导入有效物品 ${summary.activeItems} 条、回收站 ${summary.deletedItems} 条、分类 ${summary.categories} 个。恢复前会自动保存当前数据库保护点。${preRestoreHint}`,
       confirmText: '确认恢复',
       confirmColor: '#D54941',
       success: (res) => {
@@ -180,7 +227,66 @@ Page({
   },
 
   onUndoTap() {
-    toastInfo(this.data.hasPreRestore ? '撤销入口待接入，保护点已保留' : '暂无恢复保护点')
+    if (this.data.undoing || this.data.exporting || this.data.importing || this.data.restoring) return
+    if (this.undoConfirming) return
+    if (this.data.protectionState === 'none') {
+      toastInfo('暂无恢复保护点，执行恢复后自动创建')
+      return
+    }
+    if (this.data.protectionState === 'error') {
+      wx.showModal({
+        title: '无法撤销',
+        content: `${this.data.protectionDescription}。未修改当前数据。`,
+        showCancel: false,
+      })
+      return
+    }
+    const summary = this.preRestoreSummary
+    if (!summary) return
+    const savedAtText = this.preRestoreTimeText === '保存时间未知' ? '保存时间未知' : `保存时间 ${this.preRestoreTimeText}`
+    this.undoConfirming = true
+    wx.showModal({
+      title: '撤销上次恢复',
+      content: `保护点${savedAtText}，将回滚到：有效物品 ${summary.activeItems} 条、回收站 ${summary.deletedItems} 条、分类 ${summary.categories} 个。当前数据会被覆盖，撤销后保护点删除，且仅能撤销最近一次恢复。`,
+      confirmText: '确认撤销',
+      confirmColor: '#D54941',
+      success: (res) => {
+        if (res.confirm) this.performUndoRestore()
+      },
+      complete: () => {
+        this.undoConfirming = false
+      },
+    })
+  },
+
+  async performUndoRestore() {
+    this.setData({ undoing: true })
+    try {
+      const result = await undoLastRestore()
+      this.pendingContent = ''
+      this.setData({
+        selectedFileName: '',
+        summary: null,
+        validationErrors: [],
+        validationStatus: '尚未选择导入文件',
+      })
+      await this.refreshProtectionState()
+      this.prepareBackupFile()
+      if (result.protectionRemoved) {
+        toastSuccess('已撤销上次恢复')
+      } else {
+        toastInfo('已撤销，但保护点删除失败，可再次撤销重试')
+      }
+    } catch (error) {
+      wx.showModal({
+        title: '撤销失败',
+        content: `${errorMessage(error)}。当前数据未被修改。`,
+        showCancel: false,
+      })
+      this.refreshProtectionState()
+    } finally {
+      this.setData({ undoing: false })
+    }
   },
 
   onWebDavTap() {
