@@ -5,6 +5,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
 ![TDesign](https://img.shields.io/badge/TDesign%20MiniProgram-1.18-0052D9)
 ![微信小程序](https://img.shields.io/badge/微信小程序-原生-07C160?logo=wechat&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## 界面预览
 
@@ -20,7 +21,8 @@
 - **多级分类**：物品与分类多对多关联，支持分类管理（增删改）。
 - **数据统计**：有效物品数、累计支出、平均单件支出、各分类计数与金额，口径全站统一。
 - **图片缓存**：URL 经 FNV-1a 哈希派生文件名，按需下载、并发受限、可手动清空。
-- **数据备份**：本地备份 / 导出 JSON / 整库恢复，支持 WebDAV（坚果云）云端备份与三份轮转。
+- **本地备份与恢复**：导出 / 从微信会话导入 JSON、整库恢复；恢复前自动生成保护点，支持「撤销上次恢复」一键回滚；本地备份快照自动轮转，仅保留最近 3 份。
+- **WebDAV 云端备份**：支持坚果云等 WebDAV 服务，云端双 manifest + SHA-256 回读校验 + 最近 3 份轮转；上传失败自动清理云端新文件，索引损坏时中止并提示。
 - **数据安全**：A/B 双版本本地数据库交替写入，revision 版本控制，损坏自动回退。
 
 ## 技术栈
@@ -57,7 +59,9 @@ miniprogram-3/
 │   ├── utils/                # 工具（金额 / 日期 / 哈希 / 校验 / 提示）
 │   ├── constants/            # 常量（路由 / 存储键 / 图片前缀）
 │   └── custom-tab-bar/       # 自定义底部导航
-├── docs/img/                 # 文档预览图
+├── docs/
+│   ├── img/                  # 文档预览图
+│   └── 分类标签参考.md       # 常用分类标签建议
 ├── typings/                  # 全局类型定义
 ├── package.json
 ├── project.config.json
@@ -92,7 +96,12 @@ miniprogram-3/
 ## 数据存储与备份
 
 - **本地存储**：业务数据写入用户文件系统（`USER_DATA_PATH`），采用 A/B 双副本 JSON 数据库交替安全写入，写入后回读校验，任一副本损坏自动回退另一副本，双库损坏时停止写入以保护数据。
-- **备份**：支持导出 / 导入本地 JSON 备份文件；支持配置 WebDAV（如坚果云）进行云端备份，云端以双 manifest + SHA-256 回读校验 + 三份轮转保证一致性。
+- **本地备份**：支持导出 / 从微信会话导入 JSON 备份文件并进行整库恢复；每次恢复前自动把当前库写入 `data/pre-restore.json` 作为保护点，备份页可「撤销上次恢复」一键回滚。本地备份快照自动轮转，仅保留最近 3 份，异常中断残留的临时文件也会顺带清理。
+- **WebDAV 云端备份**：支持坚果云等 WebDAV 服务，云端以 A/B 双 manifest + SHA-256 回读校验 + 最近 3 份轮转保证一致性。上传任意环节失败会删除刚写入的云端文件；manifest 读取区分「不存在 / 内容损坏 / 网络或鉴权失败」，两份索引均损坏时中止并提示，避免误重建导致旧备份失联。
+
+## 分类标签参考
+
+新建分类时可参考 [docs/分类标签参考.md](docs/分类标签参考.md)，内置 20 余个常用四字标签与数十个两字标签，可直接挑选使用。
 
 ## 分层架构
 
@@ -108,4 +117,4 @@ Page（页面/交互）
 
 ## License
 
-待定
+本项目采用 [MIT License](LICENSE)。
