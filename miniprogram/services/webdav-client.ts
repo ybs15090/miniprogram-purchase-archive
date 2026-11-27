@@ -32,6 +32,8 @@ export interface WebDavClient {
   checkConnection(): Promise<WebDavConnectionResult>
   putText(name: string, content: string): Promise<void>
   getText(name: string): Promise<string>
+  /** 读取文本；仅 404 返回 null，401/403/5xx/网络异常抛错 */
+  getTextIfExists(name: string): Promise<string | null>
   deleteText(name: string): Promise<void>
   downloadFile(name: string, filePath: string): Promise<void>
   getFileStat(filePath: string): Promise<WebDavFileStat>
@@ -174,17 +176,50 @@ class WebDavClientImpl implements WebDavClient {
     }
   }
 
+  /** 发起 GET 并返回原始状态码与文本；网络层异常统一转为可读错误 */
+  private async fetchText(name: string): Promise<RequestResult> {
+    try {
+      return await this.request('GET', this.fileUrl(name))
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      throw new Error(`读取失败：网络异常（${message}）`)
+    }
+  }
+
+  /** 将读取失败的状态码转换为面向用户的说明 */
+  private describeReadFailure(statusCode: number): string {
+    if (statusCode === 401 || statusCode === 403) {
+      return '认证失败，请检查 WebDAV 账号与应用密码'
+    }
+    if (statusCode >= 500) {
+      return `云端服务暂时不可用（状态码 ${statusCode}），请稍后重试`
+    }
+    return `状态码 ${statusCode}`
+  }
+
   async getText(name: string): Promise<string> {
-    const res = await this.request('GET', this.fileUrl(name))
+    const res = await this.fetchText(name)
     if (res.statusCode !== 200) {
-      throw new Error(`下载失败，状态码 ${res.statusCode}`)
+      throw new Error(`读取失败：${this.describeReadFailure(res.statusCode)}`)
     }
     return res.data
   }
 
+  /**
+   * 仅 404 视为“文件不存在”返回 null；
+   * 401/403/5xx 等一律抛错，避免被上层误判为云端无索引而重建 manifest。
+   */
+  async getTextIfExists(name: string): Promise<string | null> {
+    const res = await this.fetchText(name)
+    if (res.statusCode === 200) return res.data
+    if (res.statusCode === 404) return null
+    throw new Error(`读取失败：${this.describeReadFailure(res.statusCode)}`)
+  }
+
   async deleteText(name: string): Promise<void> {
     const res = await this.request('DELETE', this.fileUrl(name))
-    if (res.statusCode !== 200 && res.statusCode !== 204) {
+    // 404 表示文件已不存在（上次删除成功但响应丢失），视为删除成功
+    if (res.statusCode !== 200 && res.statusCode !== 204 && res.statusCode !== 404) {
       throw new Error(`删除失败，状态码 ${res.statusCode}`)
     }
   }

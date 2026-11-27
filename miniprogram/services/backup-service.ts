@@ -7,7 +7,7 @@ import type { BackupFile } from '../models/backup'
 import type { Item } from '../models/item'
 import type { Category } from '../models/category'
 import { readDatabase, saveDatabase, snapshotToPreRestore, CURRENT_SCHEMA_VERSION, isItemShape, isCategoryShape } from '../storage/database-storage'
-import { getUserDataPath, joinPath, readTextFile, writeTextFile, mkdir, exists } from '../storage/local-storage'
+import { getUserDataPath, joinPath, readTextFile, writeTextFile, mkdir, exists, readdir, removeFile } from '../storage/local-storage'
 import { DATA_DIR, PRE_RESTORE } from '../constants/storage-keys'
 import { now } from '../utils/date'
 import { isHttpUrl, isNonNegativeInteger, isPositiveInteger } from '../utils/validation'
@@ -160,12 +160,83 @@ export async function validateBackup(path: string): Promise<BackupValidationResu
   }
 }
 
+/** 本地备份快照池上限：local-backup-<ts>.json 与 local-backup-share-<ts>.json 合计保留数 */
+const MAX_LOCAL_SNAPSHOTS = 3
+/** 快照白名单：整串锚定，database-a/b.json、pre-restore.json 等永远不会匹配 */
+const SNAPSHOT_PATTERN = /^local-backup-(?:share-)?(\d+)\.json$/
+/** 旧版本遗留的无时间戳快照文件名：当前代码不再生成，直接清理 */
+const LEGACY_SNAPSHOT_NAMES = ['local-backup.json', 'local-backup-share.json']
+/** WebDAV 异常中断可能残留的临时文件（正常流程已在 finally 中删除） */
+const TEMP_FILE_PATTERNS = [/^webdav-upload-verify-(\d+)\.json$/, /^webdav-download-(\d+)\.json$/]
+/** 临时文件保护窗口：避免误删仍在进行中的上传/下载校验文件 */
+const TEMP_FILE_MIN_AGE_MS = 10 * 60 * 1000
+
+/**
+ * 本地备份文件轮转（只在生成备份后调用）：
+ * 1. 快照池合计保留最新 MAX_LOCAL_SNAPSHOTS 份；
+ * 2. 删除旧版本遗留的无时间戳快照；
+ * 3. 删除超过保护窗口的 WebDAV 临时文件；
+ * 4. 只按白名单文件名匹配，删除失败静默忽略，不影响备份主流程。
+ */
+export async function pruneLocalBackups(protectedPath?: string): Promise<void> {
+  const dir = joinPath(getUserDataPath(), DATA_DIR)
+  let files: string[]
+  try {
+    files = await readdir(dir)
+  } catch {
+    // 目录尚未创建或不可读：没有可清理内容
+    return
+  }
+
+  // 刚生成的快照必须无条件保留
+  const protectedName = protectedPath ? protectedPath.slice(protectedPath.lastIndexOf('/') + 1) : ''
+  const snapshots: { name: string; ts: number }[] = []
+  const legacySnapshots: string[] = []
+  const expiredTemps: string[] = []
+  const currentTs = now()
+
+  for (const name of files) {
+    const snapshot = SNAPSHOT_PATTERN.exec(name)
+    if (snapshot) {
+      snapshots.push({ name, ts: Number(snapshot[1]) })
+      continue
+    }
+    if (LEGACY_SNAPSHOT_NAMES.includes(name)) {
+      legacySnapshots.push(name)
+      continue
+    }
+    for (const pattern of TEMP_FILE_PATTERNS) {
+      const temp = pattern.exec(name)
+      if (temp) {
+        const ts = Number(temp[1])
+        if (Number.isFinite(ts) && currentTs - ts > TEMP_FILE_MIN_AGE_MS) {
+          expiredTemps.push(name)
+        }
+        break
+      }
+    }
+  }
+
+  // 按文件名中的时间戳倒序；同一毫秒时按名称倒序，保证结果稳定
+  snapshots.sort((a, b) => b.ts - a.ts || (a.name < b.name ? 1 : a.name > b.name ? -1 : 0))
+  const stale = [
+    ...snapshots.slice(MAX_LOCAL_SNAPSHOTS).map((item) => item.name),
+    ...legacySnapshots,
+    ...expiredTemps,
+  ]
+  for (const name of stale) {
+    if (name === protectedName) continue
+    await removeFile(joinPath(dir, name)).catch(() => undefined)
+  }
+}
+
 /** 在本地数据目录写一份备份快照文件，返回路径 */
 export async function createLocalBackup(): Promise<string> {
   const text = await exportJson()
   const path = joinPath(getUserDataPath(), DATA_DIR, `local-backup-${Date.now()}.json`)
   await mkdir(joinPath(getUserDataPath(), DATA_DIR))
   await writeTextFile(path, text)
+  await pruneLocalBackups(path).catch(() => undefined)
   return path
 }
 
@@ -175,6 +246,8 @@ export async function createShareBackup(): Promise<string> {
   const path = joinPath(getUserDataPath(), DATA_DIR, `local-backup-share-${Date.now()}.json`)
   await mkdir(joinPath(getUserDataPath(), DATA_DIR))
   await writeTextFile(path, text)
+  // 备份页 onShow 每次都会走到这里，是本地快照累积的主要来源
+  await pruneLocalBackups(path).catch(() => undefined)
   return path
 }
 
