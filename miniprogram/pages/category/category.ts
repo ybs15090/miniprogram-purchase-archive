@@ -149,4 +149,11 @@ Page({
     this.setData({ selectedIds: [], rangeKey: 'all' })
     this.refresh()
   },
+
+  onCardTap(e: WechatMiniprogram.CustomEvent) {
+    const id = e.detail.id as string
+    if (id) {
+      wx.navigateTo({ url: `/pages/item-detail/item-detail?id=${id}` })
+    }
+  },
 })

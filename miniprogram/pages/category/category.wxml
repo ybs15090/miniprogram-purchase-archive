@@ -63,7 +63,7 @@
       <empty-state wx:elif="{{cards.length === 0}}" icon="🔍" text="当前筛选没有命中物品" hint="调整分类或时间范围" />
       <view wx:else class="hit-list">
         <block wx:for="{{cards}}" wx:key="item.id">
-          <item-card item="{{item.item}}" layout="single" categoryNames="{{item.categoryNames}}" />
+          <item-card item="{{item.item}}" layout="single" categoryNames="{{item.categoryNames}}" bind:cardtap="onCardTap" />
         </block>
       </view>
     </view>
