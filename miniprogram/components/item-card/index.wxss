@@ -97,7 +97,7 @@
 }
 
 .single-cover-wrap {
-  width: 180rpx;
+  width: 240rpx;
   height: 180rpx;
   border-radius: 16rpx;
   overflow: hidden;

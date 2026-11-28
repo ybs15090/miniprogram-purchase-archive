@@ -34,20 +34,6 @@
       </view>
     </view>
 
-    <!-- 购买信息 -->
-    <view class="section-title">购买信息</view>
-    <view class="card field-card">
-      <view class="field-row"><text class="field-label">购买时间</text><text class="field-value">{{dateText}}</text></view>
-      <view wx:if="{{item.purchasePlatform}}" class="field-row"><text class="field-label">购买平台</text><text class="field-value">{{item.purchasePlatform}}</text></view>
-      <view wx:if="{{item.orderNumber}}" class="field-row"><text class="field-label">订单编号</text><text class="field-value order-number">{{item.orderNumber}}</text></view>
-      <view wx:if="{{item.productUrl}}" class="field-row field-row--link" bindtap="onOpenLinkTap">
-        <text class="field-label">商品链接</text>
-        <text class="field-link">复制链接 📋</text>
-      </view>
-      <view class="field-row"><text class="field-label">创建时间</text><text class="field-value">{{createdAtText}}</text></view>
-      <view class="field-row"><text class="field-label">更新时间</text><text class="field-value">{{updatedAtText}}</text></view>
-    </view>
-
     <!-- 描述 -->
     <block wx:if="{{item.description}}">
       <view class="section-title">描述</view>
@@ -75,6 +61,20 @@
         />
         <view wx:else class="detail-image detail-image--placeholder">图片不可用</view>
       </block>
+    </view>
+
+    <!-- 购买信息 -->
+    <view class="section-title">购买信息</view>
+    <view class="card field-card">
+      <view class="field-row"><text class="field-label">购买时间</text><text class="field-value">{{dateText}}</text></view>
+      <view wx:if="{{item.purchasePlatform}}" class="field-row"><text class="field-label">购买平台</text><text class="field-value">{{item.purchasePlatform}}</text></view>
+      <view wx:if="{{item.orderNumber}}" class="field-row"><text class="field-label">订单编号</text><text class="field-value order-number">{{item.orderNumber}}</text></view>
+      <view wx:if="{{item.productUrl}}" class="field-row field-row--link" bindtap="onOpenLinkTap">
+        <text class="field-label">商品链接</text>
+        <text class="field-link">复制链接 📋</text>
+      </view>
+      <view class="field-row"><text class="field-label">创建时间</text><text class="field-value">{{createdAtText}}</text></view>
+      <view class="field-row"><text class="field-label">更新时间</text><text class="field-value">{{updatedAtText}}</text></view>
     </view>
 
     <!-- 操作 -->

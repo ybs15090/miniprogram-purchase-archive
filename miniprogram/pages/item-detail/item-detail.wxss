@@ -9,7 +9,8 @@
 
 .cover {
   width: 100%;
-  height: 400rpx;
+  aspect-ratio: 4 / 3;
+  height: auto;
   display: block;
   background: var(--color-fill);
 }
